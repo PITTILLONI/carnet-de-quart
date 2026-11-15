@@ -1,0 +1,925 @@
+<title>Carnet de quart</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<style>
+/* Layout : app mobile d'abord, une colonne. Les couleurs viennent des pavillons du code international : bleu marine, jaune, rouge et blanc, posés en aplats. Grand champ marine en tête de chaque écran, barre d'onglets en bas, à portée de pouce. */
+:root{
+  --page:#EEF2F6; --panel:#FFFFFF; --panel-2:#E1E8F0; --ink:#0B2545; --ink-2:#3F546C;
+  --navy:#0B2545; --navy-2:#1C3A60; --on-navy:#FFFFFF; --on-navy-2:#C2CFDE;
+  --yellow:#F5C400; --on-yellow:#0B2545;
+  --red:#C8102E; --green:#00804A; --red-soft:#FBE2E6; --green-soft:#D9F0E4;
+  --sky:#D6E4EE;
+  --font:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --t-s:14px; --t-b:16px; --t-l:20px; --t-h:28px; --t-d:clamp(56px,17vw,112px);
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+  --r:14px; --ease:cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --page:#061426; --panel:#0E2138; --panel-2:#17304E; --ink:#EAF0F6; --ink-2:#A9BACC;
+  --navy:#123A66; --navy-2:#24507F; --on-navy:#FFFFFF; --on-navy-2:#C8D6E6;
+  --red:#FF6B7D; --green:#3FD08C; --red-soft:#3A1521; --green-soft:#0E3526; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --page:#061426; --panel:#0E2138; --panel-2:#17304E; --ink:#EAF0F6; --ink-2:#A9BACC;
+  --navy:#123A66; --navy-2:#24507F; --on-navy:#FFFFFF; --on-navy-2:#C8D6E6;
+  --red:#FF6B7D; --green:#3FD08C; --red-soft:#3A1521; --green-soft:#0E3526; color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--page);color:var(--ink);font-family:var(--font);font-size:var(--t-b);line-height:1.55;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;touch-action:manipulation}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--page)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:6px}
+h1,h2,h3{margin:0;line-height:1.05;text-wrap:balance}
+h2{font-size:var(--t-h);font-weight:800;font-stretch:112%;letter-spacing:-.01em}
+h3{font-size:var(--t-l);font-weight:700;font-stretch:105%}
+p{margin:0}
+.sub{color:var(--ink-2)}
+.small{font-size:var(--t-s)}
+.press{transition:transform .15s var(--ease),background-color .2s}
+.press:active{transform:scale(.97)}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.col{max-width:680px;margin:0 auto}
+.stack{display:flex;flex-direction:column;gap:var(--s4)}
+.row{display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:16px;z-index:50;background:var(--yellow);color:var(--on-yellow);padding:12px 16px;border-radius:10px}
+
+/* Barre du haut */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--page)}
+.bar-in{display:flex;align-items:center;gap:var(--s2);padding-block:var(--s3);min-height:60px}
+.name{flex:1;min-width:0;font-size:var(--t-l);font-weight:800;font-stretch:125%;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:999px;background:var(--panel-2);font-size:var(--t-s);font-weight:700;white-space:nowrap}
+.pill svg{width:16px;height:16px;flex:none}
+.pill.xp{background:var(--yellow);color:var(--on-yellow)}
+
+main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.view{display:flex;flex-direction:column;gap:var(--s6);padding-block:var(--s2) var(--s6)}
+.enter>*{animation:rise .32s var(--ease) both}
+.enter>*:nth-child(2){animation-delay:.04s}.enter>*:nth-child(3){animation-delay:.08s}.enter>*:nth-child(4){animation-delay:.12s}.enter>*:nth-child(5){animation-delay:.16s}.enter>*:nth-child(n+6){animation-delay:.2s}
+@keyframes rise{from{transform:translateY(10px)}to{transform:none}}
+
+/* Champ marine (héros de chaque écran) */
+.field{background:var(--navy);color:var(--on-navy);border-radius:20px;padding:var(--s5) var(--s5) var(--s5);display:flex;flex-direction:column;gap:var(--s4);position:relative;overflow:hidden}
+.field .lead{color:var(--on-navy-2)}
+.field h1{font-size:var(--t-d);font-weight:800;font-stretch:125%;letter-spacing:-.03em;line-height:.9;overflow-wrap:anywhere}
+.field h1.mid{font-size:clamp(40px,11vw,72px)}
+.gauge{height:12px;border-radius:6px;background:var(--navy-2);overflow:hidden}
+.gauge i{display:block;height:100%;width:100%;background:var(--yellow);transform-origin:left;transition:transform .6s var(--ease)}
+.meta{display:flex;justify-content:space-between;gap:var(--s2);flex-wrap:wrap;color:var(--on-navy-2);font-size:var(--t-s);font-weight:600}
+.meta b{color:var(--on-navy)}
+.go{display:flex;align-items:center;gap:var(--s4);width:100%;min-height:72px;padding:var(--s3) var(--s4);border-radius:14px;background:var(--yellow);color:var(--on-yellow);text-align:left}
+.go .t{display:block;font-size:var(--t-l);font-weight:800;font-stretch:112%;line-height:1.15}
+.go .d{display:block;font-size:var(--t-s);font-weight:500}
+.go .arrow{margin-left:auto;width:24px;height:24px;flex:none}
+.flagP{width:44px;height:32px;flex:none;border-radius:3px}
+
+/* Panneaux */
+.panel{background:var(--panel);border-radius:var(--r);padding:var(--s4)}
+.sec{display:flex;flex-direction:column;gap:var(--s3)}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3)}
+.more{min-height:44px;padding:0 4px;font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px;text-decoration-color:var(--yellow);font-size:var(--t-b)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.tile{display:flex;flex-direction:column;gap:var(--s2);text-align:left;background:var(--panel);border-radius:var(--r);padding:var(--s3);min-width:0}
+.tile .art{background:var(--sky);border-radius:10px;aspect-ratio:4/3;display:grid;place-items:center;overflow:hidden}
+.tile .art svg{height:84%;width:auto;max-width:100%}
+.tile p{font-size:var(--t-s);color:var(--ink-2)}
+@media (max-width:359px){.tiles{grid-template-columns:1fr}}
+
+.list{display:flex;flex-direction:column;gap:var(--s2)}
+.item{display:grid;grid-template-columns:1fr auto;gap:var(--s2) var(--s4);align-items:center;width:100%;min-height:64px;text-align:left;background:var(--panel);border-radius:12px;padding:var(--s3) var(--s4)}
+.item h3{font-size:var(--t-b);font-weight:700;font-stretch:100%;line-height:1.3}
+.item .pct{font-weight:800;font-size:var(--t-b);min-width:3.2em;text-align:right}
+.item .track{grid-column:1/-1;height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
+.item .track i{display:block;height:100%;background:var(--green);transform-origin:left}
+.chev{width:20px;height:20px;color:var(--ink-2)}
+
+/* Fiche de cours */
+.lesson ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:var(--s2);max-width:62ch}
+.lesson li::marker{color:var(--red)}
+.lesson b{font-weight:700}
+.back{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:700;color:var(--ink-2);align-self:flex-start}
+.back svg{width:20px;height:20px}
+.note{background:var(--panel-2);border-radius:12px;padding:var(--s3) var(--s4);font-size:var(--t-s);color:var(--ink-2);max-width:62ch}
+.note a{font-weight:700;color:var(--ink)}
+
+/* Boutons */
+.btn{min-height:48px;padding:0 var(--s5);border-radius:12px;font-weight:700;background:var(--panel-2);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.main{background:var(--ink);color:var(--page)}
+.btn.warn{background:var(--red-soft);color:var(--red)}
+.btn.block{width:100%}
+
+/* Fiche bateau */
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4) var(--s3)}
+.spec b{display:block;font-size:var(--t-h);font-weight:800;font-stretch:112%;line-height:1.05}
+.spec span{font-size:var(--t-s);color:var(--on-navy-2)}
+.src{font-size:var(--t-s);color:var(--on-navy-2)}
+.src a{color:var(--on-navy);font-weight:700}
+
+/* Missions */
+.mis{background:var(--panel);border-radius:12px;overflow:hidden}
+.mis summary{list-style:none;display:grid;grid-template-columns:28px 1fr auto;gap:var(--s3);align-items:center;padding:var(--s3) var(--s4);min-height:64px;cursor:pointer}
+.mis summary::-webkit-details-marker{display:none}
+.box{width:28px;height:28px;border-radius:8px;background:var(--panel-2);display:grid;place-items:center;color:#fff}
+.box svg{width:18px;height:18px}
+.mis.done .box{background:var(--green)}
+.mis h3{font-size:var(--t-b);font-weight:700;font-stretch:100%;line-height:1.3}
+.mis .xp{font-size:var(--t-s);font-weight:700;color:var(--ink-2)}
+.mis[open] .chev{transform:rotate(90deg)}
+.chev{transition:transform .2s var(--ease)}
+.mis .body{padding:0 var(--s4) var(--s4) calc(var(--s4) + 28px + var(--s3));display:flex;flex-direction:column;gap:var(--s3)}
+.mis ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:62ch}
+.grp{font-size:var(--t-l);font-weight:800;font-stretch:112%;margin-top:var(--s3)}
+
+/* Formulaires */
+.form{display:grid;grid-template-columns:1fr;gap:var(--s3)}
+@media (min-width:560px){.form{grid-template-columns:1fr 1fr}.form .full{grid-column:1/-1}}
+.f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.f label{font-size:var(--t-s);font-weight:700;color:var(--ink-2)}
+.f input,.f select,.f textarea{min-height:48px;border:2px solid var(--panel-2);background:var(--page);border-radius:10px;padding:10px 12px;width:100%;font-size:var(--t-b)}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--ink);outline:none}
+.f textarea{min-height:96px;resize:vertical}
+.entry{background:var(--panel);border-radius:12px;padding:var(--s3) var(--s4);display:flex;flex-direction:column;gap:6px}
+
+/* Carnet */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4) var(--s3)}
+.stat b{display:block;font-size:clamp(32px,9vw,44px);font-weight:800;font-stretch:112%;line-height:1}
+.stat span{font-size:var(--t-s);color:var(--on-navy-2)}
+.badges{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+@media (min-width:560px){.badges{grid-template-columns:repeat(3,1fr)}}
+.badge{background:var(--panel);border-radius:12px;padding:var(--s3);display:flex;gap:var(--s3);align-items:flex-start}
+.badge svg{width:28px;height:36px;flex:none}
+.badge b{display:block;font-size:var(--t-b);line-height:1.25}
+.badge span{font-size:var(--t-s);color:var(--ink-2)}
+.badge.off{background:transparent;padding-inline:var(--s2)}
+.badge.off b{color:var(--ink-2)}
+.ranks{display:flex;flex-direction:column;gap:2px}
+.rank{display:flex;justify-content:space-between;padding:10px var(--s4);border-radius:10px}
+.rank.on{background:var(--yellow);color:var(--on-yellow);font-weight:800}
+
+/* Overlay (quiz et jeux) */
+.overlay{position:fixed;inset:0;z-index:20;background:var(--page);overflow-y:auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.overlay:not([hidden]) .ov{animation:sheet .26s var(--ease) both}
+@keyframes sheet{from{transform:translateY(24px)}to{transform:none}}
+.ov{display:flex;flex-direction:column;gap:var(--s5);padding-block:var(--s3) var(--s7)}
+.ov-top{display:flex;align-items:center;gap:var(--s3);min-height:48px}
+.x{width:44px;height:44px;border-radius:50%;background:var(--panel-2);display:grid;place-items:center;flex:none}
+.x svg{width:20px;height:20px}
+.steps{display:flex;gap:4px;flex:1}
+.steps i{flex:1;height:6px;border-radius:3px;background:var(--panel-2);transition:background-color .2s}
+.steps i.ok{background:var(--green)}.steps i.ko{background:var(--red)}.steps i.cur{background:var(--ink)}
+.count{font-weight:700;font-size:var(--t-s);color:var(--ink-2);min-width:3em;text-align:right}
+.topic{font-size:var(--t-s);font-weight:700;color:var(--ink-2)}
+.q{font-size:var(--t-h);font-weight:800;font-stretch:108%;line-height:1.15;text-wrap:balance}
+.opts{display:flex;flex-direction:column;gap:var(--s2)}
+.opt{display:flex;gap:var(--s3);align-items:center;min-height:60px;padding:var(--s3) var(--s4);border-radius:12px;background:var(--panel);text-align:left;font-weight:500;line-height:1.35}
+.opt .k{width:32px;height:32px;border-radius:8px;background:var(--panel-2);display:grid;place-items:center;font-weight:800;font-size:var(--t-s);flex:none}
+.opt .k svg{width:18px;height:18px}
+.opt.ok{background:var(--green-soft)}.opt.ok .k{background:var(--green);color:#fff}
+.opt.ko{background:var(--red-soft)}.opt.ko .k{background:var(--red);color:#fff}
+.opt:disabled{cursor:default}
+.opt:disabled:not(.ok):not(.ko){opacity:.6}
+.fb{border-radius:12px;padding:var(--s4);display:flex;flex-direction:column;gap:6px;animation:rise .25s var(--ease) both}
+.fb.ok{background:var(--green-soft)}.fb.ko{background:var(--red-soft)}
+.fb strong{font-size:var(--t-l);font-weight:800;font-stretch:108%}
+.fb.ok strong{color:var(--green)}.fb.ko strong{color:var(--red)}
+.dock{position:sticky;bottom:0;padding-block:var(--s3) calc(var(--s3) + env(safe-area-inset-bottom,0px));background:var(--page)}
+.result{display:flex;flex-direction:column;gap:var(--s4)}
+.stage{background:var(--sky);border-radius:16px;display:grid;place-items:center;padding:var(--s2)}
+.stage svg{width:100%;max-width:320px;height:auto;display:block}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.choice{min-height:52px;padding:var(--s2) var(--s3);border-radius:12px;background:var(--panel);font-weight:700;line-height:1.2}
+.choice.sel{background:var(--ink);color:var(--page)}
+.choice.ok{background:var(--green);color:#fff}
+.choice.ko{background:var(--red);color:#fff}
+.choice:disabled{cursor:default}
+.choice.port::before,.choice.stbd::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.choice.port::before{background:var(--red)}.choice.stbd::before{background:var(--green)}
+.choice.ok::before,.choice.ko::before{background:#fff}
+.label{font-weight:700}
+
+/* Onglets */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--panel);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabs-in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.tab{min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:var(--t-s);font-weight:700;color:var(--ink-2);position:relative}
+.tab svg{width:24px;height:24px}
+.tab.on{color:var(--ink)}
+.tab.on::before{content:"";position:absolute;top:0;left:28%;right:28%;height:4px;border-radius:0 0 4px 4px;background:var(--yellow)}
+
+.toasts{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:50%;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:min(92vw,420px)}
+.toast{background:var(--ink);color:var(--page);padding:12px 18px;border-radius:999px;font-size:var(--t-s);font-weight:700;box-shadow:0 8px 24px rgba(4,14,28,.25); /* taste-skill-ignore : notification flottante */animation:drop .22s var(--ease) both}
+.toast.gold{background:var(--yellow);color:var(--on-yellow)}
+@keyframes drop{from{transform:translateY(-10px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (min-width:768px){.view{gap:var(--s7)}.field{padding:var(--s6)}}
+</style>
+
+<a class="skip" href="#view">Aller au contenu</a>
+<header class="bar"><div class="bar-in col gutter">
+  <span class="name">Carnet de quart</span>
+  <span class="pill" id="streak"></span>
+  <span class="pill xp" id="xp"></span>
+</div></header>
+
+<main><div class="col gutter"><div class="view" id="view" tabindex="-1"></div></div></main>
+
+<nav class="tabs" aria-label="Sections"><div class="tabs-in">
+  <button class="tab" data-tab="accueil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Quart</button>
+  <button class="tab" data-tab="theorie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5C6 4 9 4.3 12 6.5 15 4.3 18 4 21 5.5V19c-3-1.5-6-1.2-9 1-3-2.2-6-2.5-9-1z"/><path d="M12 6.5V20"/></svg>Théorie</button>
+  <button class="tab" data-tab="bord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="1.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.8 2.8M16.2 16.2L19 19M5 19l2.8-2.8M16.2 7.8L19 5"/></svg>À bord</button>
+  <button class="tab" data-tab="carnet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h12l-3 4 3 4H5"/></svg>Carnet</button>
+</div></nav>
+
+<div class="overlay" id="overlay" hidden role="dialog" aria-modal="true" aria-label="Entraînement"><div class="col gutter"><div class="ov" id="ov"></div></div></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   CONTENU : fiches et questions. Faits vérifiés sur des sources
+   publiques (voir SOURCES en bas du contenu).
+   ============================================================ */
+const MODULES = [
+{ id:"bateau", t:"Le bateau et son vocabulaire", intro:"Avant de régler quoi que ce soit, il faut parler la même langue que l'équipage. Ce sont les mots que ton père va utiliser à la barre.",
+  lessons:[
+   {h:"Se repérer", li:["<b>Bâbord</b> à gauche, <b>tribord</b> à droite, en regardant vers l'avant. Astuce : dans « batterie », <i>ba</i> est à gauche, <i>tri</i> à droite.","<b>Au vent</b> : le côté qui reçoit le vent. <b>Sous le vent</b> : le côté abrité, où part la bôme.","<b>Étrave</b> à l'avant, <b>tableau arrière</b> à l'arrière. Le 40.3 se barre avec deux barres à roue."]},
+   {h:"Le gréement", li:["Le mât est tenu par l'<b>étai</b> (avant, il porte le génois sur son enrouleur), le <b>pataras</b> (arrière) et les <b>haubans</b> (côtés), écartés par les barres de flèche.","<b>Drisse</b> : hisse une voile. <b>Écoute</b> : règle son angle. <b>Bosse</b> : manœuvre secondaire (ris, enrouleur).","<b>Hale-bas</b> : empêche la bôme de monter. <b>Chariot</b> d'écoute de GV : déplace le point d'écoute sur le rail."]},
+   {h:"Les verbes de l'équipier", li:["<b>Border</b> = tendre une écoute. <b>Choquer</b> = la relâcher. <b>Étarquer</b> = tendre une drisse au maximum.","<b>Lofer</b> = remonter vers le vent. <b>Abattre</b> = s'en éloigner.","<b>Tirant d'eau</b> : profondeur sous la quille. Sur le 40.3 : 1,95 m en quille standard, 1,50 m en quille courte. <b>Tirant d'air</b> : hauteur du mât, pour les ponts."]}
+  ],
+  qs:[
+   ["Bâbord, c'est…",["Le côté gauche du bateau en regardant vers l'avant","Le côté droit en regardant vers l'avant","L'arrière du bateau","Le côté qui reçoit le vent"],"Moyen mnémotechnique : dans « batterie », « ba » (bâbord) est à gauche et « tri » (tribord) à droite."],
+   ["Lofer, c'est…",["Remonter vers le lit du vent","S'éloigner du lit du vent","Relâcher une écoute","Hisser une voile"],"Lofer rapproche l'étrave du vent. L'inverse se dit abattre."],
+   ["Abattre, c'est…",["S'écarter du lit du vent","Rapprocher l'étrave du vent","Affaler la grand-voile","Virer de bord"],"On abat pour accélérer au portant ou éviter un obstacle sous le vent."],
+   ["Que fait-on quand on « choque » une écoute ?",["On la relâche","On la tend","On la range en glène","On la bloque au taquet"],"Choquer = donner du mou. Border = reprendre."],
+   ["À quoi sert une drisse ?",["Hisser une voile","Régler l'angle d'une voile","Amarrer le bateau","Tenir le mât vers l'arrière"],"La drisse monte la voile. L'écoute règle son angle par rapport au vent."],
+   ["Le pataras est…",["Le câble qui tient le mât vers l'arrière","Le câble avant qui porte le génois","Un hauban latéral","Le rail du chariot de grand-voile"],"En l'étarquant, on cintre le mât et on aplatit la grand-voile dans la brise."],
+   ["Le tirant d'eau, c'est…",["La profondeur sous le point le plus bas de la quille","La hauteur du mât au-dessus de l'eau","La longueur à la flottaison","La contenance du réservoir d'eau"],"C'est le chiffre à garder en tête avant chaque passage par petits fonds. Sur le 40.3 : 1,95 m en quille standard, 1,50 m en quille courte."],
+   ["Le tirant d'air compte surtout pour…",["Passer sous un pont ou une ligne électrique","Choisir un mouillage par petits fonds","Calculer sa vitesse","Régler le génois"],"Le tirant d'air est la hauteur totale au-dessus de l'eau, antenne VHF comprise."],
+   ["Le côté « au vent » du bateau est…",["Celui qui reçoit le vent en premier","Celui où se trouve la bôme","Toujours tribord","Le côté abrité"],"La bôme et les voiles partent sous le vent, à l'opposé."],
+   ["Étarquer une drisse, c'est…",["La tendre au maximum","La relâcher doucement","La ranger en glène","La passer au taquet sans tension"],"On étarque la drisse de GV au winch pour effacer les plis horizontaux le long du mât."]
+  ]},
+{ id:"vent", t:"Le vent et les allures", intro:"Toute la voile part d'une seule question : d'où vient le vent par rapport à mon bateau ? L'angle entre l'axe du bateau et le vent s'appelle l'allure.",
+  lessons:[
+   {h:"Les allures, du vent debout au vent arrière", li:["<b>Vent debout</b> : trop près du vent, les voiles faseyent, on n'avance pas. C'est la zone morte.","<b>Près</b> : on remonte au vent. Un croiseur remonte en général autour de 45° du vent.","<b>Travers</b> : le vent arrive perpendiculairement au bateau, entre 80 et 100° environ.","<b>Largue</b> puis <b>grand largue</b> : on est au portant, le vent arrive de plus en plus de l'arrière.","<b>Vent arrière</b> : le vent vient de derrière. Attention à l'empannage involontaire.","Les angles sont des repères : leurs limites varient d'un manuel à l'autre."]},
+   {h:"Les amures", li:["<b>Tribord amures</b> : le vent arrive par tribord, la bôme est à bâbord.","<b>Bâbord amures</b> : le vent arrive par bâbord, la bôme est à tribord.","C'est l'information clé des règles de priorité entre voiliers."]},
+   {h:"Vent réel, vent apparent", li:["Le <b>vent apparent</b> est celui que l'on ressent à bord : le vent réel combiné au vent créé par notre vitesse.","Au près, il est plus fort et plus en avant que le vent réel. Au portant, il est plus faible.","Piège classique : au vent arrière tout semble calme, puis on remonte au près et ça souffle fort."]},
+   {h:"Bascules", li:["<b>Adonnante</b> : le vent passe sur l'arrière, on peut lofer.","<b>Refusante</b> : le vent vient plus de face, il faut abattre.","Pour atteindre un point au vent, on <b>louvoie</b> : on tire des bords de près en virant de bord."]}
+  ],
+  qs:[
+   ["Le vent apparent, c'est…",["Le vent ressenti à bord : vent réel combiné au vent de la vitesse","Le vent mesuré par Météo-France","Le vent moyen sans les rafales","Le vent en tête de mât uniquement"],"La girouette en tête de mât et les penons indiquent toujours le vent apparent."],
+   ["Au près, comparé au vent réel, le vent apparent est…",["Plus fort et plus en avant","Plus faible et plus en arrière","Identique","Plus faible et plus en avant"],"On avance contre le vent, notre vitesse s'ajoute au vent réel."],
+   ["Au vent arrière, le vent apparent est…",["Plus faible que le vent réel","Plus fort que le vent réel","Toujours nul","Le double du vent réel"],"On fuit devant le vent. Il faut anticiper la réduction de toile avant de remonter au près."],
+   ["Un croiseur remonte en général au vent jusqu'à environ…",["45° du vent","15° du vent","80° du vent","120° du vent"],"Plus près du vent, les voiles faseyent et le bateau s'arrête : c'est la zone morte."],
+   ["Au vent de travers, le vent arrive…",["Perpendiculairement à l'axe du bateau","Par l'arrière","Par l'avant","À 150° de l'étrave"],"Travers : autour de 90° entre l'axe du bateau et le vent."],
+   ["Entre le travers et le vent arrière, on trouve…",["Le largue puis le grand largue","Le près puis le près serré","Le bon plein uniquement","La zone morte"],"Ce sont les allures portantes."],
+   ["Un bateau est « tribord amures » quand…",["Il reçoit le vent par tribord","Sa bôme est à tribord","Il tourne vers tribord","Il est amarré par tribord"],"Vent par tribord, donc bôme à bâbord. Ne pas confondre les deux."],
+   ["La « zone morte » correspond à…",["Les angles trop proches du vent, où les voiles faseyent","Le vent arrière","Une absence totale de vent","La zone abritée derrière une île"],"Pour un croiseur, elle s'étend jusqu'à environ 45° de chaque côté du lit du vent."],
+   ["Pour rejoindre un point situé face au vent, on…",["Louvoie, en tirant des bords de près","Navigue au vent arrière","Se met au travers","Reste au largue"],"On zigzague au près en virant de bord."],
+   ["Une adonnante est une bascule de vent qui…",["Passe sur l'arrière et permet de lofer","Oblige à abattre","Fait forcir le vent","Annule le vent"],"L'inverse, la refusante, vient plus de face et oblige à abattre."]
+  ]},
+{ id:"voiles", t:"Régler les voiles", intro:"Une voile bien réglée, c'est un bateau plus rapide, plus droit et plus facile à barrer. Les penons sont tes meilleurs professeurs.",
+  lessons:[
+   {h:"Lire les penons du génois", li:["Les deux penons filent à l'horizontale : réglage juste.","<b>Penon au vent qui décroche</b> (s'agite, monte) : la voile est trop choquée ou tu es trop lofé. Borde ou abats.","<b>Penon sous le vent qui décroche</b> : voile trop bordée ou bateau trop abattu. Choque ou lofe."]},
+   {h:"Creux et vrillage", li:["Une voile <b>creuse</b> est puissante : utile dans le petit temps ou une mer formée.","Dans la brise on <b>aplatit</b> : pataras étarqué, bordure tendue, cunningham.","Le <b>vrillage</b> : le haut de la voile s'ouvre plus que le bas. Plus de vrillage = moins de puissance en haut.","Point de tire du génois avancé : chute fermée, plus de creux en bas. Reculé : chute ouverte, bas plus plat."]},
+   {h:"Équilibre et gîte", li:["Un bateau <b>ardent</b> veut lofer tout seul : souvent trop de grand-voile ou trop de gîte.","Trop de gîte = plus de dérive, safran qui freine, équipage fatigué. Un bateau plus droit va plus vite.","Pour déventer une rafale : choquer l'écoute de GV ou descendre le chariot sous le vent."]},
+   {h:"Réduire la toile", li:["Prends le ris quand tu te poses la question, pas quand tu y es obligé.","Un génois sur enrouleur se réduit en choquant l'écoute et en roulant à la bosse, puis on reborde.","Génois partiellement roulé : avance le point de tire, sinon le haut de la voile s'ouvre trop."]}
+  ],
+  qs:[
+   ["Le penon au vent du génois décroche. Que faire ?",["Abattre un peu ou border","Lofer davantage","Choquer encore","Rien, c'est le bon réglage"],"La voile est attaquée trop de face : on abat, ou on borde pour retrouver l'écoulement."],
+   ["Le penon sous le vent décroche. Que faire ?",["Lofer un peu ou choquer","Abattre ou border","Rouler le génois","Monter le chariot"],"La voile est trop fermée par rapport au vent : on la choque ou on lofe."],
+   ["Réglage idéal aux penons :",["Les deux penons filent à l'horizontale","Penon au vent qui monte, penon sous le vent qui tombe","Les deux penons tournent","Seul le penon au vent bouge"],"Un écoulement régulier des deux côtés indique une voile bien réglée."],
+   ["Dans la brise, pour réduire la puissance de la grand-voile, on peut…",["Étarquer le pataras et descendre le chariot sous le vent","Choquer le pataras et monter le chariot au vent","Choquer la bordure pour creuser","Choquer le hale-bas au près"],"On aplatit la voile et on la dévente."],
+   ["Le hale-bas sert surtout à…",["Empêcher la bôme de monter, en particulier au portant","Hisser la grand-voile","Tenir le mât vers l'avant","Enrouler le génois"],"Sans hale-bas, la bôme monte, la voile vrille trop et le bateau roule au vent arrière."],
+   ["Une voile très creuse est plutôt…",["Puissante, utile dans le petit temps ou la mer formée","Adaptée à la brise forte","Mal hissée","Réservée au vent arrière"],"Le creux donne de la puissance. Dans la brise, on aplatit."],
+   ["Avancer le point de tire du génois…",["Ferme la chute et donne du creux dans le bas","Ouvre la chute et aplatit le bas","Ne change rien","Sert uniquement à l'enroulement"],"L'écoute tire alors plus vers le bas : la chute se tend, la bordure se détend."],
+   ["Le vrillage d'une voile, c'est…",["Le haut de la voile plus ouvert que le bas","Une déchirure de la chute","L'enroulement du génois","La torsion du mât"],"On le règle avec le hale-bas, le chariot et le point de tire."],
+   ["Quand prendre un ris ?",["Dès qu'on se pose la question, avant que le vent forcisse","Seulement à 45° de gîte","Uniquement au port","Jamais au près"],"Prendre un ris tôt est facile. Le prendre tard, dans la mer formée, est pénible et risqué."],
+   ["Le bateau est ardent, il veut lofer seul. Cause fréquente :",["Trop de puissance dans la grand-voile et trop de gîte","Génois trop bordé","Pas assez de toile","Bateau trop à plat"],"On choque ou on réduit la GV, on descend le chariot : la barre redevient douce."],
+   ["Un bateau qui gîte trop au près…",["Dérive davantage et devient ardent","Va toujours plus vite","Avance pareil","N'est concerné que génois roulé"],"Un bateau plus droit marche mieux et fatigue moins l'équipage."]
+  ]},
+{ id:"manoeuvres", t:"Manœuvres", intro:"Les manœuvres réussies se préparent : chacun sait ce qu'il fait avant que la barre bouge. Les annonces servent à ça.",
+  lessons:[
+   {h:"Virer et empanner", li:["<b>Virement de bord</b> : l'avant passe dans le lit du vent. Annonces : « Paré à virer ? », réponse « Paré ! », puis « Virez ! ». Certains skippers disent « Envoyez ».","Garde de la vitesse avant de virer, sinon le bateau reste bout au vent.","<b>Empannage</b> : l'arrière passe dans le lit du vent. Annonces : « Paré à empanner ? », « Paré ! », « Empannez ! ». Borde la GV au centre, passe la bôme sous contrôle, puis choque.","Un empannage non contrôlé peut casser du matériel et blesser : attention aux têtes dans le cockpit."]},
+   {h:"Au moteur, au port", li:["Le <b>pas d'hélice</b> fait déraper l'arrière, surtout en marche arrière. Avec un pas à droite (le cas de la plupart des monomoteurs), l'arrière part à bâbord. Teste le tien.","Arrive lentement, face à l'élément dominant (vent ou courant). La vitesse se donne par petits coups de moteur.","Prépare amarres et défenses avant d'entrer. Annonce qui saute, qui tient quelle amarre."]},
+   {h:"Mouiller", li:["Choisis un fond de sable ou de vase, abrité, avec de la place pour l'évitage.","Chaîne : 3 fois la profondeur au strict minimum par temps calme, 5 fois ou plus dès que le vent ou la houle se lèvent.","Vérifie la tenue avec des alignements à terre ou l'alarme de mouillage du GPS."]},
+   {h:"Ris et cape", li:["Prise de ris : choquer écoute et hale-bas, affaler au repère, crocher le point d'amure, étarquer la drisse puis la bosse de ris, reborder.","<b>Cape</b> : vire sans choquer le génois, qui passe à contre, et mets la barre pour lofer. Le bateau se calme et dérive doucement. Pratique pour un repas ou une prise de ris."]}
+  ],
+  qs:[
+   ["Pendant un virement de bord, l'avant du bateau passe…",["Par le lit du vent","Par le vent arrière","Sous le vent","Nulle part"],"Virement de bord = l'étrave traverse le lit du vent."],
+   ["Pendant un empannage, c'est…",["L'arrière du bateau qui passe dans le lit du vent","L'avant qui passe face au vent","Le génois qui se roule","La quille qui se relève"],"Au portant, on change d'amure en empannant."],
+   ["Avant d'empanner, avec la grand-voile, on…",["La borde au centre pour contrôler le passage de la bôme","La choque en grand","L'affale","Largue le hale-bas"],"Bôme au centre, elle traverse doucement, puis on choque sur le nouveau bord."],
+   ["L'annonce classique avant de virer est :",["« Paré à virer ? »","« Mayday »","« Choquez tout ! »","« Bon plein ! »"],"L'équipage répond « Paré ! » quand écoutes et winches sont prêts, puis le barreur annonce « Virez ! »."],
+   ["En marche arrière, avec une hélice à pas à droite, l'arrière part…",["Vers bâbord","Vers tribord","Tout droit","Vers le vent"],"Note le comportement réel de ton bateau : c'est une mission à faire à bord."],
+   ["Pour accoster, on arrive de préférence…",["Lentement, face à l'élément dominant (vent ou courant)","Vite, pour garder de la manœuvrabilité","Toujours vent arrière","Moteur coupé dès l'entrée du port"],"Face au vent ou au courant, le bateau freine naturellement et reste manœuvrant."],
+   ["Au mouillage sur chaîne, quelle longueur filer quand le vent se lève ?",["5 fois la profondeur ou plus","Une fois la profondeur","La moitié de la profondeur","10 m dans tous les cas"],"3 fois est un minimum par temps calme. La tenue chute nettement en dessous de 5 fois quand ça souffle."],
+   ["Comment vérifier qu'on ne chasse pas ?",["Alignements à terre ou position GPS surveillée","La couleur de l'eau","Le bruit du moteur","Le nombre de vagues"],"Deux amers alignés qui se décalent : on chasse."],
+   ["Se mettre à la cape, c'est…",["Virer en laissant le génois à contre, barre mise pour lofer","Affaler toutes les voiles","Partir au vent arrière","Mettre le moteur à fond"],"Le bateau ralentit et se stabilise. Utile pour souffler, déjeuner ou prendre un ris."],
+   ["Quel ordre pour prendre un ris ?",["Choquer écoute et hale-bas, affaler au repère, crocher l'amure, étarquer drisse puis bosse","Étarquer la drisse d'abord puis border","Affaler complètement puis rehisser","Border l'écoute à fond puis affaler"],"Une GV déventée descend facilement. On la retend ensuite par la drisse puis la bosse."],
+   ["Pour prendre une bouée de corps-mort, on arrive…",["Lentement, vent ou courant de face, et on s'arrête dessus","Vent arrière, à bonne vitesse","Par le travers, voiles bordées","Toujours en marche arrière"],"Comme pour accoster : c'est l'élément dominant qui freine le bateau."]
+  ]},
+{ id:"noeuds", t:"Matelotage", intro:"Une poignée de nœuds suffit pour l'essentiel. Le bon nœud tient sous charge et se défait facilement après.",
+  lessons:[
+   {h:"Les cinq indispensables", li:["<b>Chaise</b> : boucle fixe qui ne coulisse pas. Amarrage, écoute sur un point d'écoute, sauvetage.","<b>Huit</b> : nœud d'arrêt en bout d'écoute, pour qu'elle ne quitte pas la poulie.","<b>Cabestan</b> : pour régler une défense sur une filière ou amarrer temporairement à un pieu.","<b>Tour mort et deux demi-clés</b> : amarrer sur un anneau, même sous tension.","<b>Nœud d'écoute</b> : joindre deux bouts de diamètres différents."]},
+   {h:"Taquets et winches", li:["Taquet : un tour, des croisillons en huit, puis une clé finale. Pas de nœud qu'on ne pourrait pas larguer vite.","Winch : toujours dans le sens horaire, 3 ou 4 tours selon la charge, doigts loin de l'entrée.","Range les bouts lovés et prêts à filer : un bout emmêlé au mauvais moment rend la manœuvre dangereuse."]}
+  ],
+  qs:[
+   ["Le nœud de chaise sert à…",["Faire une boucle fixe qui ne coulisse pas et se défait facilement","Joindre deux cordages","Arrêter le bout d'une écoute","Régler une défense"],"Le roi des nœuds : à savoir faire les yeux fermés."],
+   ["Le nœud en huit s'utilise…",["En bout d'écoute pour qu'elle ne s'échappe pas de la poulie","Pour amarrer au ponton","Pour tenir une défense","Pour prendre un ris"],"C'est un nœud d'arrêt."],
+   ["Pour régler la hauteur d'une défense sur une filière, on fait souvent…",["Un nœud de cabestan","Un nœud en huit","Un nœud d'écoute","Un nœud plat"],"Il se règle et se défait en un instant."],
+   ["Pour joindre deux cordages de diamètres différents :",["Nœud d'écoute","Nœud de chaise","Nœud de cabestan","Demi-clé"],"Le plus gros bout forme la boucle, le plus fin vient s'y prendre."],
+   ["Tourner un taquet correctement, c'est…",["Un tour, des croisillons en huit, puis une clé finale","Une simple demi-clé","Enrouler sans croiser","Un nœud plat sur le taquet"],"La clé finale bloque, les croisillons tiennent la charge."],
+   ["Tour mort et deux demi-clés sert à…",["Amarrer sur un anneau, même sous tension","Raccourcir un bout","Faire une boucle de sauvetage","Arrêter une écoute"],"Le tour mort encaisse la charge pendant qu'on fait les demi-clés."],
+   ["Lover un cordage, c'est…",["Le ranger en boucles régulières","Le couper","L'épisser","Le tendre au winch"],"Un bout bien lové file sans faire de coque."],
+   ["Sur un winch, on enroule l'écoute…",["Dans le sens horaire","Dans le sens antihoraire","Peu importe","Sans jamais faire de tour"],"Les winches de pont tournent dans le sens des aiguilles d'une montre."],
+   ["Pourquoi garder les doigts loin de l'entrée du winch ?",["Le bout sous charge peut les entraîner","Pour ne pas salir le winch","Pour ne pas perdre la manivelle","Par superstition"],"Une écoute de génois sous charge pince très fort."]
+  ]},
+{ id:"balisage", t:"Balisage (région A)", intro:"En Europe, on applique le système IALA région A. Les marques te disent où passer, de jour par leurs formes et couleurs, de nuit par leurs feux.",
+  lessons:[
+   {h:"Marques latérales", li:["En <b>entrant au port</b> (en venant du large) : <b>rouge à bâbord</b>, <b>vert à tribord</b>.","Rouge : voyant cylindrique, feu rouge. Vert : voyant conique pointe en haut, feu vert.","En sortant, c'est l'inverse : rouge à tribord."]},
+   {h:"Cardinales", li:["Elles indiquent le côté où se trouvent les eaux sûres : on passe <b>au nord</b> d'une cardinale Nord.","Voyants (deux cônes noirs) : Nord ▲▲, Sud ▼▼, Est ▲▼ (losange), Ouest ▼▲ (sablier).","Les pointes des cônes indiquent où est le noir sur la bouée : Nord, noir en haut ; Sud, noir en bas.","Feux blancs scintillants, comme un cadran d'horloge : <b>Est 3</b>, <b>Sud 6 + un éclat long</b>, <b>Ouest 9</b>, <b>Nord continu</b>."]},
+   {h:"Autres marques", li:["<b>Danger isolé</b> : noir et rouge, deux sphères noires. Petit danger, eaux saines autour. Feu blanc à 2 éclats.","<b>Eaux saines</b> : bandes verticales rouges et blanches, sphère rouge. Milieu de chenal ou atterrissage.","<b>Marque spéciale</b> : jaune, voyant en X. Zone de baignade, câble, mouillage réglementé.","<b>Bouée d'épave nouvelle</b> : bandes bleues et jaunes."]}
+  ],
+  qs:[
+   ["En région A, en entrant au port, la marque rouge se laisse…",["À bâbord","À tribord","Indifféremment","Derrière soi"],"Rouge à bâbord en entrant, vert à tribord."],
+   ["La marque latérale tribord (région A) est…",["Verte, voyant conique","Rouge, voyant cylindrique","Jaune avec une croix","Noire et jaune"],"Cône vert pointe en haut, feu vert."],
+   ["Devant une cardinale Nord, on passe…",["Au nord de la marque","Au sud","À l'est","Au plus près"],"La cardinale indique le côté des eaux sûres."],
+   ["Le voyant d'une cardinale Nord :",["Deux cônes pointes vers le haut","Deux cônes pointes vers le bas","Base contre base","Pointe contre pointe"],"▲▲ : les pointes montrent le haut, comme le nord sur la carte."],
+   ["Cardinale Ouest : voyant et couleurs",["Pointe contre pointe, jaune-noir-jaune","Base contre base, noir-jaune-noir","Deux sphères noires","Une croix jaune"],"Forme de sablier, ou d'un W couché. Le noir est au milieu."],
+   ["Les cônes d'une cardinale Est sont…",["Base contre base (en losange)","Pointe contre pointe","Pointes vers le bas","Pointes vers le haut"],"▲▼ : les pointes s'écartent, le noir est en haut et en bas."],
+   ["Le feu d'une cardinale Sud :",["6 scintillements suivis d'un éclat long","3 scintillements","9 scintillements","Scintillement continu"],"Le 6 de l'horloge. L'éclat long évite de le confondre avec 3 ou 9."],
+   ["Le feu d'une cardinale Est :",["3 scintillements","6 scintillements + un long","9 scintillements","Continu"],"Le 3 de l'horloge."],
+   ["Bouée noire et rouge surmontée de deux sphères noires :",["Danger isolé, eaux saines tout autour","Eaux saines","Cardinale","Marque spéciale"],"On peut passer de tous les côtés, en gardant de la marge."],
+   ["Bandes verticales rouges et blanches, sphère rouge :",["Eaux saines (milieu de chenal, atterrissage)","Danger isolé","Marque spéciale","Latérale bâbord"],"Souvent la première bouée d'un chenal d'accès."],
+   ["Marque jaune avec un voyant en X :",["Marque spéciale (baignade, câble, zone réglementée)","Cardinale Ouest","Danger isolé","Épave nouvelle"],"Elle ne dit pas de quel côté passer : regarde la carte."],
+   ["Moyen mnémotechnique pour les feux des cardinales :",["Le cadran d'une horloge : Est 3, Sud 6, Ouest 9","Le nombre de lettres du nom","L'ordre alphabétique","Les saisons"],"Le Nord, en haut du cadran, scintille en continu."]
+  ]},
+{ id:"regles", t:"Règles de barre et feux", intro:"Le règlement international (RIPAM) organise qui s'écarte de qui. Le connaître, c'est éviter de deviner au dernier moment.",
+  lessons:[
+   {h:"Entre voiliers", li:["Amures différentes : <b>bâbord amures s'écarte</b> de tribord amures.","Mêmes amures : <b>le bateau au vent s'écarte</b> de celui sous le vent.","Dans tous les cas, le <b>rattrapant s'écarte</b>."]},
+   {h:"Voile et moteur", li:["Un navire à moteur s'écarte d'un voilier, sauf s'il est rattrapé ou gêné dans un chenal.","Au moteur, même voiles hautes, <b>tu es un navire à moteur</b>. Le jour, voiles hautes et moteur en route, tu montres à l'avant un cône noir pointe en bas.","Dans un chenal étroit, ne gêne jamais un navire qui ne peut naviguer qu'à l'intérieur (cargo, ferry)."]},
+   {h:"Risque de collision", li:["Relève l'autre bateau au compas : si le <b>relèvement ne change pas</b> alors qu'il se rapproche, il y a risque de collision.","Le privilégié garde cap et vitesse, mais manœuvre si l'autre ne réagit pas.","Manœuvre franche et tôt, pour qu'elle soit visible."]},
+   {h:"Feux de nuit", li:["Feux de côté : <b>rouge à bâbord</b>, <b>vert à tribord</b>. Feu de poupe blanc à l'arrière.","Navire à moteur : en plus, un feu blanc de tête de mât vers l'avant.","Rouge et vert visibles ensemble : il vient droit sur toi.","Au mouillage : une boule noire le jour, un feu blanc visible tout autour la nuit."]}
+  ],
+  qs:[
+   ["Deux voiliers sur des amures différentes, route de collision. Qui s'écarte ?",["Celui qui est bâbord amures","Celui qui est tribord amures","Le plus petit","Le plus rapide"],"Tribord amures est privilégié."],
+   ["Deux voiliers sur les mêmes amures :",["Celui au vent s'écarte","Celui sous le vent s'écarte","Le plus grand s'écarte","Personne"],"Le bateau sous le vent a moins de marge de manœuvre, il est privilégié."],
+   ["Vous rattrapez un bateau plus lent :",["Vous vous écartez, quel que soit son type","Il doit s'écarter","Un voilier est toujours prioritaire","On passe en klaxonnant"],"Le rattrapant s'écarte, même si c'est un voilier qui rattrape un bateau à moteur."],
+   ["Votre voilier avance au moteur, voiles affalées. Pour le règlement, vous êtes…",["Un navire à moteur","Un voilier","Prioritaire sur tous","Non maître de votre manœuvre"],"Les règles voile ne s'appliquent que sous voiles seules."],
+   ["Dans un chenal étroit, face à un cargo qui ne peut manœuvrer que dans le chenal :",["Vous ne devez pas le gêner, même à la voile","Il doit s'écarter du voilier","Vous êtes prioritaire tribord amures","Vous restez au milieu du chenal"],"Reste sur le bord droit du chenal et laisse-lui la place."],
+   ["De nuit, vous voyez un feu rouge seul. C'est…",["Le côté bâbord d'un navire","Le côté tribord d'un navire","L'arrière d'un navire","Un navire au mouillage"],"Il croise de votre droite vers votre gauche."],
+   ["Feux rouge et vert visibles ensemble, avec un feu blanc au-dessus :",["Un navire à moteur qui vient droit sur vous","Un voilier qui s'éloigne","Un navire au mouillage","Un phare"],"Les deux feux de côté visibles = il vous fait face. Le feu blanc de tête de mât indique un moteur."],
+   ["Un feu blanc fixe et bas devant vous, seul :",["L'arrière d'un navire, ou un petit bateau au mouillage","Un navire qui vient de face","Un phare","Un voilier tribord amures"],"Feu de poupe : vous êtes en train de le rattraper, c'est à vous de vous écarter."],
+   ["Le jour, un voilier au moteur voiles hautes montre…",["Un cône noir pointe en bas","Une boule noire","Deux boules noires","Rien"],"Règle 25 du RIPAM : à l'avant, à l'endroit le plus visible. Il se traite comme un navire à moteur."],
+   ["Au mouillage, de jour, on doit montrer…",["Une boule noire à l'avant","Un cône pointe en haut","Un pavillon rouge","Un feu clignotant"],"La nuit, un feu blanc visible sur tout l'horizon."],
+   ["Le bateau privilégié dans un croisement doit…",["Garder cap et vitesse, puis manœuvrer si l'autre ne réagit pas","Changer de cap tout de suite","Accélérer","Stopper net"],"Être privilégié ne dispense jamais d'éviter l'abordage."],
+   ["Comment détecter un risque de collision ?",["Le relèvement de l'autre ne change pas alors qu'il se rapproche","Il est plus grand que nous","Il a une voile rouge","Il est sous le vent"],"Relèvement constant, distance qui diminue : danger."]
+  ]},
+{ id:"meteo", t:"Météo marine", intro:"La décision la plus importante d'une journée de voile se prend souvent au port, en lisant le bulletin.",
+  lessons:[
+   {h:"L'échelle de Beaufort", li:["Force 3 : 7 à 10 nœuds, petite brise.","Force 4 : 11 à 16 nœuds, jolie brise. Les moutons deviennent nombreux.","Force 5 : 17 à 21 nœuds, bonne brise.","Force 6 : 22 à 27 nœuds, vent frais.","Force 7 : 28 à 33 nœuds, grand frais. Météo-France émet un BMS côte dès que le vent moyen atteint force 7 (force 8 pour le BMS large)."]},
+   {h:"Pressions et fronts", li:["Dans l'hémisphère nord, le vent tourne autour d'une dépression dans le sens inverse des aiguilles d'une montre.","Dos au vent, la dépression est à ta gauche (loi de Buys-Ballot).","Baromètre qui chute vite : dégradation et vent qui forcit.","Front froid : grains, rafales, vent qui tourne à droite (dans le sens des aiguilles d'une montre), puis éclaircies."]},
+   {h:"Effets locaux", li:["<b>Brise thermique</b> : par beau temps, elle s'établit l'après-midi de la mer vers la terre et tombe le soir.","<b>Grain</b> sous un cumulonimbus : rafales, pluie, saute de vent. Réduis avant qu'il arrive.","Effets de cap et de pointe : le vent accélère et la mer se creuse."]},
+   {h:"Où trouver la météo", li:["Bulletins côtiers Météo-France, diffusés en VHF par les CROSS (annonce sur le 16, puis canal de dégagement).","Affichage à la capitainerie, applications, sites de prévisions.","Lis vent moyen et rafales, direction et évolution dans la journée."]}
+  ],
+  qs:[
+   ["Force 5 Beaufort, c'est environ…",["17 à 21 nœuds","4 à 6 nœuds","28 à 33 nœuds","41 à 47 nœuds"],"Force 5 s'appelle la bonne brise."],
+   ["Force 7 Beaufort :",["28 à 33 nœuds, grand frais","11 à 16 nœuds, jolie brise","1 à 3 nœuds","Ouragan"],"Pas de sortie d'apprentissage dans ces conditions."],
+   ["Un BMS côte est émis en France à partir de…",["Force 7","Force 4","Force 10","Force 2"],"BMS = bulletin météorologique spécial. Côte : dès force 7 de vent moyen. Large : dès force 8."],
+   ["Dans l'hémisphère nord, autour d'une dépression, le vent tourne…",["Dans le sens inverse des aiguilles d'une montre","Dans le sens des aiguilles d'une montre","Il ne tourne pas","Vers le haut"],"Autour d'un anticyclone, c'est l'inverse."],
+   ["Le baromètre chute rapidement. Cela annonce le plus souvent…",["Une dégradation et du vent qui forcit","Un beau temps durable","Un calme plat","Rien de particulier"],"Note la pression régulièrement dans le journal de bord pour voir la tendance."],
+   ["La brise thermique de mer s'établit typiquement…",["L'après-midi par beau temps, de la mer vers la terre","La nuit, de la terre vers la mer","Le matin par temps couvert","Seulement en hiver"],"La terre chauffe plus vite que la mer : l'air monte au-dessus de la terre et la brise de mer arrive."],
+   ["Le passage d'un front froid s'accompagne souvent de…",["Grains, rafales et vent qui tourne à droite","Vent qui faiblit sans nuages","Brouillard durable","Hausse de température"],"Derrière le front, l'air est plus froid et plus instable."],
+   ["Un gros cumulonimbus approche :",["Grain : rafales violentes, pluie, saute de vent","Rien, c'est un nuage de beau temps","Vent faible et régulier","Hausse de pression"],"Réduis la toile avant son arrivée."],
+   ["Loi de Buys-Ballot (hémisphère nord) : dos au vent, la dépression est…",["À votre gauche","À votre droite","Devant vous","Derrière vous"],"Pratique pour situer la dépression sans carte."],
+   ["Où écouter la météo marine en mer ?",["En VHF : annonce du CROSS sur le 16, puis canal de dégagement","Seulement sur la FM","Sur le 16 en continu","Nulle part"],"Le 16 sert à annoncer la diffusion, le bulletin passe sur un autre canal."]
+  ]},
+{ id:"nav", t:"Navigation et marées", intro:"Savoir où l'on est, combien d'eau il y a sous la quille et où le courant nous emmène.",
+  lessons:[
+   {h:"Unités", li:["<b>1 mille nautique = 1 852 m</b> = une minute d'arc de latitude.","<b>1 nœud = 1 mille par heure</b>. À 6 nœuds, on fait 6 milles en une heure.","Sur la carte, on mesure les distances sur l'échelle des latitudes, à hauteur de la zone de navigation."]},
+   {h:"Marées", li:["Le <b>marnage</b> est la différence entre pleine mer et basse mer.","Coefficient de 20 à 120, calculé par le SHOM pour Brest : 45 = morte-eau moyenne, 70 = marée moyenne, 95 = vive-eau moyenne.","<b>Règle des douzièmes</b> : 1-2-3-3-2-1. La mer monte de 1/12 du marnage la 1re heure, 2/12 la 2e, 3/12 la 3e et la 4e…","Les courants sont plus forts à mi-marée et en vive-eau."]},
+   {h:"Profondeur", li:["Les <b>sondes</b> de la carte sont données par rapport au <b>zéro des cartes</b>, proche des plus basses mers.","Profondeur réelle = sonde + hauteur de marée à l'instant.","Garde un pied de pilote sous la quille du 40.3 : 1,95 m de tirant d'eau (quille standard) plus une marge."]},
+   {h:"Caps et point", li:["Cap vrai = cap compas + déviation + déclinaison (chacune avec son signe, Est positif).","Un point par relèvements de trois amers donne un petit triangle. Grand triangle : relèvements ou amers à revoir.","La route fond diffère du cap à cause de la dérive (vent) et du courant."]}
+  ],
+  qs:[
+   ["Un mille nautique vaut…",["1 852 m","1 000 m","1 609 m","2 000 m"],"Le mille terrestre anglais fait 1 609 m : à ne pas confondre."],
+   ["Un mille correspond à…",["Une minute d'arc de latitude","Un degré de longitude","Une minute de longitude, partout","Un degré de latitude"],"C'est pour ça qu'on mesure sur l'échelle des latitudes."],
+   ["Un nœud, c'est…",["Un mille par heure","Un kilomètre par heure","Un mètre par seconde","Un mille par minute"],"6 nœuds ≈ 11 km/h."],
+   ["Règle des douzièmes : pendant la 3e heure de marée, l'eau monte de…",["3/12 du marnage","1/12","2/12","6/12"],"1-2-3-3-2-1 : les 3e et 4e heures sont les plus rapides."],
+   ["Le marnage, c'est…",["La différence de hauteur entre pleine mer et basse mer","La durée d'une marée","La vitesse du courant","La profondeur au zéro des cartes"],"Plus le coefficient est grand, plus le marnage est grand."],
+   ["Un coefficient de 95 indique…",["Une vive-eau : gros marnage et courants forts","Une morte-eau","Une marée moyenne","Pas de marée"],"95 correspond à la vive-eau moyenne."],
+   ["Les sondes de la carte sont données par rapport…",["Au zéro des cartes, proche des plus basses mers","À la pleine mer","Au niveau moyen","À la surface actuelle"],"La profondeur réelle est donc presque toujours supérieure à la sonde."],
+   ["Profondeur réelle à un instant donné =",["Sonde + hauteur de marée","Sonde − hauteur de marée","Hauteur de marée seule","Sonde × coefficient"],"Une sonde négative (soulignée) découvre à marée basse."],
+   ["Cap vrai = cap compas + …",["Déviation + déclinaison, avec leur signe","La dérive seulement","Le courant","La vitesse"],"La déviation dépend du bateau, la déclinaison du lieu."],
+   ["Sur une carte, on mesure les distances sur…",["L'échelle des latitudes (bords verticaux)","L'échelle des longitudes (bords horizontaux)","La rose des vents","N'importe quel bord"],"Une minute de longitude ne vaut un mille qu'à l'équateur."],
+   ["Un point par trois relèvements donne un grand triangle. Cela signifie…",["Une imprécision : relèvements ou amers à vérifier","Un point très précis","Qu'on est arrivé","Une forte marée"],"Recommence avec des amers bien répartis autour du bateau."],
+   ["Les courants de marée sont les plus forts…",["Vers la mi-marée","À pleine mer","À basse mer","Toujours pareil"],"Pense à l'étale pour passer un raz ou un goulet."]
+  ]},
+{ id:"securite", t:"Sécurité et urgences", intro:"Les réflexes de sécurité doivent venir sans réfléchir. Ce module se révise souvent, même quand on se croit au point.",
+  lessons:[
+   {h:"Homme à la mer", li:["Crier « Un homme à la mer ! », lancer la bouée et la perche, appuyer sur MOB au GPS.","Désigner un équipier qui <b>pointe la personne du doigt sans la quitter des yeux</b>.","Revenir sous voiles ou au moteur, hélice débrayée près de la personne. S'entraîner avec une défense lestée."]},
+   {h:"Appels radio", li:["<b>VHF canal 16</b> : veille et détresse.","<b>MAYDAY</b> : détresse, vie ou bateau en danger grave et imminent.","<b>PAN PAN</b> : urgence, problème sérieux sans danger immédiat de mort.","<b>SÉCURITÉ</b> : message d'avertissement (météo, navigation).","Au téléphone, le CROSS se joint au <b>196</b>, gratuit. La VHF canal 16 reste prioritaire en mer."]},
+   {h:"Sur le pont", li:["Gilet porté et réglé, impérativement de nuit, seul sur le pont ou dans la brise.","Longe attachée à la ligne de vie quand ça bouge. Une main pour soi, une main pour le bateau.","Monoxyde de carbone : jamais de chauffage ou de réchaud sans aération."]},
+   {h:"Voie d'eau, feu", li:["Voie d'eau : chercher l'origine (vannes, presse-étoupe, durites), pomper, boucher.","Repère l'emplacement des vannes, des extincteurs et de la pompe de cale manuelle dès le premier jour."]}
+  ],
+  qs:[
+   ["Homme à la mer : première action ?",["Crier, lancer la bouée et désigner quelqu'un qui pointe la personne","Démarrer le moteur et faire demi-tour plein gaz","Téléphoner à la famille","Affaler toutes les voiles"],"Les premières secondes comptent : bouée, MOB au GPS, une vigie qui ne lâche pas des yeux."],
+   ["Pourquoi un équipier doit-il pointer la personne du doigt en permanence ?",["On perd très vite de vue une tête dans les vagues","Pour le règlement","Pour la photo","Ça ne sert à rien"],"À quelques dizaines de mètres, une tête disparaît derrière la moindre vague."],
+   ["« MAYDAY » s'utilise quand…",["Une vie ou le bateau est en danger grave et imminent","On a une panne moteur sans danger","On signale un danger météo","On cherche une place au port"],"Répété trois fois, suivi du nom du bateau, de la position et de la nature de la détresse."],
+   ["« PAN PAN » signifie…",["Urgence : problème sérieux sans danger de mort immédiat","Détresse","Message météo","Fin de communication"],"Exemple : démâtage sans blessé, panne moteur près des cailloux."],
+   ["Canal VHF de veille et de détresse :",["16","9","72","68"],"On passe ensuite sur un canal de dégagement pour discuter."],
+   ["Le CROSS coordonne…",["La surveillance et le sauvetage en mer","Les places au port","Les régates","Uniquement la météo"],"Centre régional opérationnel de surveillance et de sauvetage."],
+   ["Numéro d'urgence en mer depuis un téléphone (France) :",["196","15","17","18"],"Gratuit, il met en relation avec le CROSS. Il dépend du réseau mobile : la VHF canal 16 reste prioritaire."],
+   ["Quand porter son gilet ?",["En navigation, et toujours de nuit, seul sur le pont ou dans la brise","Seulement sous la pluie","Seulement au port","Jamais quand il fait chaud"],"Un gilet qui reste dans le coffre ne sert à rien."],
+   ["De nuit ou par gros temps sur le pont, on…",["S'attache avec une longe sur une ligne de vie","Se tient au pataras","Reste debout à l'avant","Retire son gilet pour être mobile"],"Le but est de ne pas tomber à l'eau."],
+   ["Le monoxyde de carbone menace surtout avec…",["Un chauffage ou un réchaud mal ventilé","Les voiles mouillées","L'eau de mer","Les gilets"],"Inodore et mortel. Aère toujours."],
+   ["Le bateau fait anormalement de l'eau. Réflexe ?",["Chercher l'origine (vannes, presse-étoupe, durites) et pomper","Ouvrir toutes les vannes","Attendre","Couper la VHF"],"Goûte l'eau : douce, c'est souvent un réservoir ou une durite ; salée, une entrée d'eau de mer."]
+  ]}
+];
+
+/* Missions pratiques à bord du Sun Odyssey 40.3 */
+const MISSIONS = [
+ {g:"Avant de larguer", items:[
+  {id:"m-meteo", t:"Lire la météo et la marée du jour", xp:30, why:"La décision de sortir se prend là.", steps:["Lis le bulletin côtier : vent moyen, rafales, direction, évolution.","Note les heures de pleine mer et basse mer et le coefficient.","Annonce à ton père ton avis : on sort, avec quelle toile ?"]},
+  {id:"m-moteur", t:"Faire le tour du moteur", xp:40, why:"La plupart des pannes se voient avant le départ.", steps:["Niveau d'huile à la jauge.","Liquide de refroidissement, courroie tendue, pas de fuite.","Vanne d'eau de mer ouverte, filtre propre.","Au démarrage : vérifie que l'eau sort bien à l'échappement."]},
+  {id:"m-secu", t:"Faire le tour de la sécurité", xp:40, why:"Savoir où tout se trouve avant d'en avoir besoin.", steps:["Gilets réglés pour chacun, longes accessibles.","Bouée de sauvetage et son feu en place, prêts à être lancés.","Extincteurs, pompe de cale manuelle, vannes : repère-les.","Test radio VHF et repère le bouton de détresse."]},
+  {id:"m-brief", t:"Faire le briefing équipage", xp:30, why:"Chacun sait son rôle avant la première manœuvre.", steps:["Qui barre, qui tient les écoutes, qui prépare les amarres.","Rappel homme à la mer : crier, bouée, pointer.","Où sont les gilets, la VHF, les toilettes."]}
+ ]},
+ {g:"Au port", items:[
+  {id:"m-pas", t:"Tester l'effet de pas d'hélice", xp:40, why:"C'est la clé des manœuvres de port de ton bateau.", steps:["Dans une zone dégagée, bateau arrêté, passe en marche arrière.","Observe de quel côté part l'arrière.","Note le résultat dans la fiche bateau."]},
+  {id:"m-sortie", t:"Sortir du ponton", xp:50, why:"La première manœuvre de la journée.", steps:["Analyse vent et courant : quelle amarre larguer en dernier ?","Défenses en place, équipier prêt à repousser.","Sors au ralenti, puis remonte les défenses une fois dégagé."]},
+  {id:"m-retour", t:"Revenir à la place", xp:80, why:"La manœuvre la plus regardée du port.", steps:["Prépare amarres et défenses avant d'entrer au port.","Arrive lentement, face à l'élément dominant.","Donne les ordres clairs à l'équipier qui passe l'amarre."]},
+  {id:"m-mouillage", t:"Mouiller et vérifier la tenue", xp:60, why:"Pour la baignade et les nuits en baie.", steps:["Choisis le fond (sable, vase) et la place pour l'évitage.","File au moins 3 fois la profondeur en chaîne, 5 fois si le vent se lève.","Recule doucement au moteur pour faire crocher.","Prends deux alignements ou active l'alarme GPS."]}
+ ]},
+ {g:"Sous voiles", items:[
+  {id:"m-gv", t:"Établir la grand-voile", xp:40, why:"À faire bateau face au vent, au moteur.", steps:["Face au vent, moteur au ralenti.","Écoute et hale-bas choqués, housse ou lazy-bag ouvert.","Hisse à la drisse, finis au winch et étarque."]},
+  {id:"m-genois", t:"Dérouler et régler le génois", xp:30, why:"La moitié de la puissance du bateau.", steps:["Bosse d'enrouleur tenue, écoute sous le vent au winch.","Déroule en contrôlant la bosse.","Règle aux penons : les deux à l'horizontale."]},
+  {id:"m-virements", t:"Réussir 10 virements de bord propres", xp:60, why:"La base du louvoyage.", steps:["Annonce « Paré à virer ? », attends « Paré ! », puis « Virez ! ».","Garde de la vitesse avant de lofer.","Le nouveau génois est bordé sans dépasser le bon réglage."]},
+  {id:"m-empannage", t:"Empanner sous contrôle", xp:60, why:"Le passage de bôme se maîtrise.", steps:["Annonce « Paré à empanner ? », attends « Paré ! », puis « Empannez ! ».","Borde la GV au centre.","Passe l'arrière dans le vent, puis choque la GV sur le nouveau bord."]},
+  {id:"m-penons", t:"Régler aux penons à chaque allure", xp:40, why:"Relie la théorie aux sensations.", steps:["Au près, travers et largue : règle le génois aux penons.","Joue avec le chariot et le pataras au près.","Observe la vitesse au loch à chaque changement."]},
+  {id:"m-ris", t:"Prendre un ris en route", xp:80, why:"Le geste qui rend la brise confortable.", steps:["Bateau au près bon plein, génois réglé.","Choque l'écoute et le hale-bas, affale au repère.","Étarque la drisse puis la bosse de ris, reborde.","Range le surplus de voile si besoin."]},
+  {id:"m-cape", t:"Se mettre à la cape", xp:50, why:"Le frein à main du voilier.", steps:["Vire sans choquer le génois.","Barre mise pour lofer, amarrée.","Observe comment le bateau dérive doucement."]}
+ ]},
+ {g:"Exercices et autonomie", items:[
+  {id:"m-mob", t:"Exercice homme à la mer (défense lestée)", xp:80, why:"Le seul vrai test de tes réflexes.", steps:["Ton père lance une défense lestée sans prévenir.","Crie, pointe, appuie sur MOB au GPS.","Reviens sur la défense et récupère-la. Note le temps."]},
+  {id:"m-point", t:"Faire un point par trois relèvements", xp:60, why:"Ne pas dépendre que du GPS.", steps:["Choisis trois amers bien répartis.","Relève-les au compas de relèvement.","Reporte sur la carte et compare au GPS."]},
+  {id:"m-nuit", t:"Identifier les feux de nuit", xp:60, why:"Lire la mer sans la voir.", steps:["Repère les feux de bouées et de phares sur la carte.","Chronomètre les rythmes.","Identifie les bateaux autour à leurs feux."]},
+  {id:"m-skipper", t:"Skipper une demi-journée", xp:120, why:"Tout relier : décisions, manœuvres, équipage.", steps:["Prépare la route, la météo et la marée.","Fais le briefing et donne les ordres.","Ton père n'intervient qu'en cas de danger."]}
+ ]}
+];
+
+const LEVELS = [{n:"Mousse",xp:0},{n:"Matelot",xp:250},{n:"Équipier",xp:700},{n:"Chef de quart",xp:1500},{n:"Second",xp:3000},{n:"Skipper",xp:5000}];
+
+const BADGES = [
+ {id:"premier",t:"Premier bord",d:"Terminer un quiz",c:()=>S.stats.sessions>=1},
+ {id:"sansfaute",t:"Sans faute",d:"10/10 à un quiz",c:()=>S.stats.perfect>=1},
+ {id:"barreur",t:"Œil du barreur",d:"10 allures justes d'affilée",c:()=>S.stats.alluresBest>=10},
+ {id:"veilleur",t:"Veilleur",d:"10 balises justes d'affilée",c:()=>S.stats.balisesBest>=10},
+ {id:"serie3",t:"Trois quarts",d:"3 jours de série",c:()=>S.streak>=3},
+ {id:"serie7",t:"Une semaine de quart",d:"7 jours de série",c:()=>S.streak>=7},
+ {id:"fiche",t:"Fiche maîtrisée",d:"Un module à 80 %",c:()=>MODULES.some(m=>mastery(m)>=.8)},
+ {id:"cursus",t:"Cursus complet",d:"Tous les modules à 80 %",c:()=>MODULES.every(m=>mastery(m)>=.8)},
+ {id:"mains",t:"Les mains dans les bouts",d:"Une mission à bord",c:()=>missionCount()>=1},
+ {id:"fiable",t:"Équipier fiable",d:"10 missions à bord",c:()=>missionCount()>=10},
+ {id:"skipper",t:"Skipper du 40.3",d:"Toutes les missions",c:()=>missionCount()>=allMissions().length},
+ {id:"journal",t:"Journal tenu",d:"5 sorties notées",c:()=>S.journal.length>=5},
+ {id:"mille",t:"Mille points",d:"1 000 XP",c:()=>S.xp>=1000}
+];
+
+const BOAT_FIELDS = [
+ ["tirant","Tirant d'eau de ton bateau","1,95 m (standard) ou 1,50 m (quille courte)"],
+ ["air","Tirant d'air","à mesurer, antenne comprise"],
+ ["moteur","Moteur","modèle et puissance"],
+ ["helice","Pas d'hélice constaté","ex. arrière part à bâbord en MAR"],
+ ["gasoil","Réservoir gasoil","litres"],
+ ["ris","Ris de grand-voile","nombre, bosses au cockpit ?"],
+ ["vannes","Vannes et pompe de cale","emplacements"],
+ ["port","Port d'attache","nom du port"],
+ ["vhf","Canal VHF du port","ex. 9"]
+];
+
+
+/* Caractéristiques publiées du Sun Odyssey 40.3 (Wikipédia, article « Sun Odyssey 40.3 ») */
+const BOAT_SPECS = [
+ ["12,20 m","longueur hors tout"],["3,95 m","largeur"],["1,95 m","tirant d'eau, quille standard"],["1,50 m","tirant d'eau, quille courte"],
+ ["8 090 kg","déplacement"],["63,8 m²","voilure : GV 31,7 + génois 32,1"]
+];
+const SOURCES = [
+ ["Sun Odyssey 40.3, Wikipédia (en)","https://en.wikipedia.org/wiki/Sun_Odyssey_40.3"],
+ ["Les BMS côte et large, Météo-France (données publiques)","https://www.data.gouv.fr/datasets/bulletin-meteorologique-special-annuel"],
+ ["Échelle de Beaufort, Environnement Canada","https://www.canada.ca/fr/environnement-changement-climatique/services/renseignements-generaux-conditions-maritimes/description-previsions-meteo/tableau-echelle-beaufort.html"],
+ ["Le 196 et l'alerte en mer, ministère de la Mer","https://www.mer.gouv.fr/comment-alerter-les-secours-en-mer"],
+ ["Règles RIPAM et marques de balisage IALA","https://ialacolreg.com/fr/colreg"],
+ ["Lire les penons du génois, Bateaux.com","https://www.bateaux.com/article/33442/ecouter-ce-que-les-penons-ont-a-nous-dire-le-genois"],
+ ["Effet de pas d'hélice, Bateaux.com","https://www.bateaux.com/article/27289/se-servir-de-l-effet-de-de-l-helice-reussir-manoeuvre-de-port"],
+ ["Longueur de chaîne au mouillage, Figaro Nautisme","https://figaronautisme.meteoconsult.fr/actus-nautisme-bateaux/2026-10-28/93615-les-pieges-du-mouillage-quelle-longueur-de-chaine-est-vraiment-necessaire"],
+ ["Premières manœuvres avec les Glénans, Figaro Nautisme","https://figaronautisme.meteoconsult.fr/actus-nautisme-bateaux/2020-07-08/55651-debuter-la-voile-avec-les-glenans-episode-2-comment-realiser-les-premieres-manoeuvres"]
+];
+
+/* ============================================================
+   ÉTAT (gardé dans ce navigateur)
+   ============================================================ */
+const KEY="carnet-quart-v1";
+function def(){return {xp:0,days:{},streak:0,lastDay:null,boxes:{},stats:{ans:0,ok:0,sessions:0,perfect:0,alluresOk:0,alluresBest:0,alluresCur:0,balisesOk:0,balisesBest:0,balisesCur:0},missions:{},missionsXp:{},journal:[],badges:{},boat:{}}}
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&typeof r==="object"){const d=def();return Object.assign(d,r,{stats:Object.assign(d.stats,r.stats||{})})}}catch(e){}return def()}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+function dayStr(d=new Date()){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function yesterday(){const d=new Date();d.setDate(d.getDate()-1);return dayStr(d)}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const allMissions=()=>MISSIONS.flatMap(g=>g.items);
+const missionCount=()=>Object.values(S.missions).filter(Boolean).length;
+function levelOf(xp){let i=0;LEVELS.forEach((l,k)=>{if(xp>=l.xp)i=k});return i}
+function liveStreak(){return (S.lastDay===dayStr()||S.lastDay===yesterday())?S.streak:0}
+function mastery(m){let s=0;m.qs.forEach((_,i)=>s+=(S.boxes[m.id+":"+i]||0));return s/(5*m.qs.length)}
+const DAILY=60;
+
+/* Icônes (SVG, trait 2) */
+const I={
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+ cross:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+ close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+ arrow:'<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+ chev:'<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',
+ back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>',
+ star:'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.2l2 4.6 5 .5-3.8 3.3 1.1 4.9L8 12 3.7 14.5l1.1-4.9L1 6.3l5-.5z" fill="currentColor"/></svg>',
+ wave:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M1.5 6c2-2 4-2 6.5 0s4.5 2 6.5 0M1.5 11c2-2 4-2 6.5 0s4.5 2 6.5 0"/></svg>',
+ /* Pavillon P du code international : bleu, carré blanc au centre. Au port, il annonce l'appareillage. */
+ flagP:'<svg class="flagP" viewBox="0 0 44 32" aria-hidden="true"><rect width="44" height="32" fill="#0B2545"/><rect x="13" y="9" width="18" height="14" fill="#FFFFFF"/></svg>'
+};
+
+function toast(msg,gold){const t=document.createElement("div");t.className="toast"+(gold?" gold":"");t.textContent=msg;$("#toasts").appendChild(t);setTimeout(()=>t.remove(),2600)}
+function addXP(n){
+  const before=levelOf(S.xp);
+  S.xp+=n;const d=dayStr();S.days[d]=(S.days[d]||0)+n;
+  if(S.lastDay!==d){S.streak=(S.lastDay===yesterday())?S.streak+1:1;S.lastDay=d}
+  const after=levelOf(S.xp);
+  if(after>before)toast("Nouveau grade : "+LEVELS[after].n,true);
+  save();checkBadges();renderTop();
+}
+function checkBadges(){BADGES.forEach(b=>{if(!S.badges[b.id]&&b.c()){S.badges[b.id]=dayStr();toast("Badge débloqué : "+b.t,true)}});save()}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function renderTop(){
+  const s=liveStreak();
+  $("#streak").innerHTML=`${I.wave}${s} j`;$("#streak").setAttribute("aria-label",`Série : ${s} jour${s>1?"s":""}`);
+  $("#xp").innerHTML=`${I.star}${S.xp} XP`;$("#xp").setAttribute("aria-label",`${S.xp} points d'expérience`);
+}
+const TABS=["accueil","theorie","bord","carnet"];
+$$(".tab").forEach(b=>b.addEventListener("click",()=>{location.hash=b.dataset.tab}));
+function paint(html){const v=$("#view");v.classList.remove("enter");v.innerHTML=html;void v.offsetWidth;v.classList.add("enter")}
+function route(){
+  const h=location.hash.slice(1)||"accueil";
+  const tab=h.startsWith("module-")?"theorie":(TABS.includes(h)?h:"accueil");
+  $$(".tab").forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle("on",on);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});
+  if(h.startsWith("module-")){const m=MODULES.find(x=>"module-"+x.id===h);if(m){renderModule(m);return}}
+  ({accueil:renderHome,theorie:renderTheory,bord:renderBoard,carnet:renderLog})[tab]();
+}
+window.addEventListener("hashchange",()=>{route();window.scrollTo(0,0)});
+function bindCommon(){
+  $$("[data-mod]").forEach(b=>b.onclick=()=>{location.hash="module-"+b.dataset.mod});
+  $$("[data-go]").forEach(b=>b.onclick=()=>{location.hash=b.dataset.go});
+}
+
+/* ============================================================
+   ÉCRANS
+   ============================================================ */
+function modItem(m){const v=mastery(m);return `<button class="item press" data-mod="${m.id}"><h3>${m.t}</h3><span class="pct">${Math.round(v*100)} %</span><span class="track" aria-hidden="true"><i style="transform:scaleX(${v.toFixed(3)})"></i></span></button>`}
+
+function renderHome(){
+  const li=levelOf(S.xp),cur=LEVELS[li],nxt=LEVELS[li+1];
+  const r=nxt?(S.xp-cur.xp)/(nxt.xp-cur.xp):1;
+  const todayXp=Math.min(S.days[dayStr()]||0,DAILY);
+  const weak=MODULES.map(m=>({m,v:mastery(m)})).sort((a,b)=>a.v-b.v).slice(0,3);
+  const nm=allMissions().find(x=>!S.missions[x.id]);
+  paint(`
+   <section class="field" aria-label="Ton grade">
+     <h1>${cur.n}</h1>
+     <p class="lead">Ton grade à bord : ${li+1} sur ${LEVELS.length}</p>
+     <div class="gauge" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(r*100)}" aria-label="Progression vers le grade suivant"><i style="transform:scaleX(${r.toFixed(3)})"></i></div>
+     <div class="meta"><span>${nxt?`<b>${nxt.xp-S.xp} XP</b> avant ${nxt.n}`:"Grade le plus haut atteint"}</span><span>Aujourd'hui <b>${todayXp}/${DAILY} XP</b></span></div>
+     <button class="go press" id="daily">${I.flagP}<span><span class="t">Prendre le quart du jour</span><span class="d">10 questions. Tes erreurs reviennent plus souvent.</span></span>${I.arrow}</button>
+   </section>
+   <section class="sec">
+     <div class="sec-h"><h2>S'entraîner vite</h2></div>
+     <div class="tiles">
+       <button class="tile press" id="gA"><span class="art">${allureSVG(312,true)}</span><h3>Allures</h3><p>Trouve l'allure et l'amure. Record : ${S.stats.alluresBest}</p></button>
+       <button class="tile press" id="gB"><span class="art">${buoySVG("W",true)}</span><h3>Balises</h3><p>Reconnais la marque. Record : ${S.stats.balisesBest}</p></button>
+     </div>
+   </section>
+   ${nm?`<section class="sec">
+     <div class="sec-h"><h2>Prochaine mission</h2><button class="more" data-go="bord">Toutes</button></div>
+     <button class="panel press stack" data-go="bord" style="text-align:left;gap:6px"><div class="row between"><h3>${nm.t}</h3><span class="pill">+${nm.xp} XP</span></div><p class="sub">${nm.why}</p></button>
+   </section>`:""}
+   <section class="sec">
+     <div class="sec-h"><h2>À réviser</h2><button class="more" data-go="theorie">Tout voir</button></div>
+     <div class="list">${weak.map(({m})=>modItem(m)).join("")}</div>
+   </section>`);
+  $("#daily").onclick=()=>startQuiz(null);
+  $("#gA").onclick=startAllures;$("#gB").onclick=startBalises;
+  bindCommon();
+}
+
+function renderTheory(){
+  const avg=MODULES.reduce((s,m)=>s+mastery(m),0)/MODULES.length;
+  paint(`
+   <section class="field">
+     <h1 class="mid">Théorie</h1>
+     <p class="lead">${MODULES.length} modules, des bases du vocabulaire aux urgences.</p>
+     <div class="gauge" aria-hidden="true"><i style="transform:scaleX(${avg.toFixed(3)})"></i></div>
+     <p class="meta"><span>Maîtrise globale <b>${Math.round(avg*100)} %</b></span><span>Fiche en 3 min, puis entraînement</span></p>
+   </section>
+   <div class="list">${MODULES.map(modItem).join("")}</div>
+   <p class="note">Les fiches résument les bases de la croisière et ont été vérifiées sur des sources publiques (liste dans l'onglet Carnet). Elles ne remplacent pas le Cours des Glénans : garde-le pour approfondir chaque notion.</p>`);
+  bindCommon();
+}
+
+function renderModule(m){
+  paint(`
+   <button class="back" data-go="theorie">${I.back}Modules</button>
+   <section class="field">
+     <h1 class="mid">${m.t}</h1>
+     <p class="lead">Maîtrise du module : ${Math.round(mastery(m)*100)} %</p>
+     <p style="max-width:52ch">${m.intro}</p>
+   </section>
+   ${m.lessons.map(l=>`<section class="panel lesson stack"><h3>${l.h}</h3><ul>${l.li.map(x=>`<li>${x}</li>`).join("")}</ul></section>`).join("")}
+   <button class="btn main block press" id="train">S'entraîner : ${Math.min(10,m.qs.length)} questions</button>`);
+  $("#train").onclick=()=>startQuiz(m.id);
+  bindCommon();
+}
+
+function renderBoard(){
+  const done=missionCount(),total=allMissions().length;
+  paint(`
+   <section class="field">
+     <h1 class="mid">Sun Odyssey 40.3</h1>
+     <p class="lead">Jeanneau, plan Daniel Andrieu, construit de 2004 à 2007.</p>
+     <div class="specs">${BOAT_SPECS.map(([v,l])=>`<div class="spec"><b>${v}</b><span>${l}</span></div>`).join("")}</div>
+     <p class="src">Gréement en tête de mât, deux barres à roue. Source : <a href="https://en.wikipedia.org/wiki/Sun_Odyssey_40.3" target="_blank" rel="noopener">Wikipédia</a>. Vérifie les chiffres de ton bateau sur ses papiers.</p>
+   </section>
+   <section class="sec">
+     <div class="sec-h"><h2>Missions</h2><span class="pill">${done}/${total}</span></div>
+     <p class="sub">Chaque mission transforme une fiche en gestes. Valide-la avec ton père une fois faite pour de vrai.</p>
+     ${MISSIONS.map(g=>`<h3 class="grp">${g.g}</h3><div class="list">${g.items.map(missionHTML).join("")}</div>`).join("")}
+   </section>
+   <section class="sec">
+     <h2>Repères de ton bateau</h2>
+     <p class="sub">Ce qui varie d'un 40.3 à l'autre. Remplis-le avec ton père.</p>
+     <form id="boatForm" class="panel form">${BOAT_FIELDS.map(([k,l,p])=>`<div class="f"><label for="b-${k}">${l}</label><input id="b-${k}" name="${k}" placeholder="${esc(p)}" value="${esc(S.boat[k]||"")}" autocomplete="off"></div>`).join("")}
+       <div class="full"><button class="btn main press" type="submit">Enregistrer les repères</button></div></form>
+   </section>
+   <section class="sec">
+     <h2>Journal de bord</h2>
+     <form class="panel form" id="jForm">
+       <div class="f"><label for="j-date">Date</label><input id="j-date" type="date" value="${dayStr()}" required></div>
+       <div class="f"><label for="j-lieu">Parcours</label><input id="j-lieu" placeholder="Port, mouillage, retour" required></div>
+       <div class="f"><label for="j-vent">Vent moyen</label><select id="j-vent">${[1,2,3,4,5,6,7].map(f=>`<option value="${f}" ${f===3?"selected":""}>Force ${f}</option>`).join("")}</select></div>
+       <div class="f"><label for="j-milles">Milles parcourus</label><input id="j-milles" type="number" inputmode="decimal" min="0" step="0.5"></div>
+       <div class="f full"><label for="j-appris">Ce que j'ai appris ou raté</label><textarea id="j-appris"></textarea></div>
+       <div class="full"><button class="btn main press" type="submit">Noter la sortie, +20 XP</button></div>
+     </form>
+     <div class="list" id="jList">${journalHTML()}</div>
+   </section>`);
+  $("#boatForm").onsubmit=e=>{e.preventDefault();BOAT_FIELDS.forEach(([k])=>S.boat[k]=$("#b-"+k).value.trim());save();toast("Repères enregistrés")};
+  $("#jForm").onsubmit=e=>{e.preventDefault();S.journal.unshift({id:Date.now(),date:$("#j-date").value,lieu:$("#j-lieu").value.trim(),vent:+$("#j-vent").value,milles:$("#j-milles").value,appris:$("#j-appris").value.trim()});save();addXP(20);toast("Sortie notée, +20 XP");renderBoard();$("#jList").scrollIntoView({block:"start"})};
+  bindMissions();bindJournal();
+}
+function missionHTML(m){const d=!!S.missions[m.id];return `<details class="mis ${d?"done":""}" data-m="${m.id}"><summary><span class="box" aria-hidden="true">${d?I.check:""}</span><span><h3>${m.t}</h3><span class="xp">${d?"Faite":"+"+m.xp+" XP"}</span></span>${I.chev}</summary><div class="body"><p class="sub">${m.why}</p><ol>${m.steps.map(s=>`<li>${s}</li>`).join("")}</ol><div><button class="btn ${d?"":"main"} press" data-mission="${m.id}">${d?"Marquer comme non faite":"Mission accomplie"}</button></div></div></details>`}
+function bindMissions(){$$("[data-mission]").forEach(b=>b.onclick=()=>toggleMission(b.dataset.mission))}
+function toggleMission(id){
+  const m=allMissions().find(x=>x.id===id);
+  S.missions[id]=!S.missions[id];
+  if(S.missions[id]&&!S.missionsXp[id]){S.missionsXp[id]=1;save();addXP(m.xp);toast(`+${m.xp} XP : ${m.t}`)}else{save();checkBadges()}
+  const el=document.querySelector(`[data-m="${id}"]`);const tmp=document.createElement("div");tmp.innerHTML=missionHTML(m);const n=tmp.firstElementChild;n.open=true;el.replaceWith(n);bindMissions();
+  const pill=document.querySelector(".sec-h .pill");if(pill)pill.textContent=`${missionCount()}/${allMissions().length}`;
+}
+function journalHTML(){
+  if(!S.journal.length)return `<p class="sub">Aucune sortie notée pour l'instant. Après chaque navigation, note le parcours, le vent et une chose apprise.</p>`;
+  return S.journal.map(j=>`<div class="entry"><div class="row between"><h3 style="font-size:var(--t-b)">${esc(j.lieu)}</h3><span class="small sub">${esc(j.date)} · force ${esc(j.vent)}${j.milles?` · ${esc(j.milles)} milles`:""}</span></div>${j.appris?`<p>${esc(j.appris)}</p>`:""}<div><button class="btn press" data-del="${j.id}">Supprimer</button></div></div>`).join("");
+}
+function bindJournal(){
+  $$("[data-del]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.armed){S.journal=S.journal.filter(j=>String(j.id)!==b.dataset.del);save();$("#jList").innerHTML=journalHTML();bindJournal()}
+    else{b.dataset.armed="1";b.textContent="Confirmer la suppression";b.classList.add("warn")}
+  });
+}
+
+function renderLog(){
+  const acc=S.stats.ans?Math.round(S.stats.ok/S.stats.ans*100):0;
+  const days=[];for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push({v:S.days[dayStr(d)]||0,l:d.getDate()})}
+  const max=Math.max(DAILY,...days.map(d=>d.v)),y=v=>(84-v/max*70).toFixed(1);
+  const li=levelOf(S.xp);
+  paint(`
+   <section class="field">
+     <h1 class="mid">Ta progression</h1>
+     <div class="stats">
+       <div class="stat"><b>${S.xp}</b><span>XP au total</span></div>
+       <div class="stat"><b>${liveStreak()} j</b><span>série en cours</span></div>
+       <div class="stat"><b>${acc} %</b><span>de bonnes réponses sur ${S.stats.ans}</span></div>
+       <div class="stat"><b>${missionCount()}</b><span>missions à bord</span></div>
+     </div>
+   </section>
+   <section class="sec">
+     <div class="sec-h"><h2>14 derniers jours</h2><span class="small sub">objectif ${DAILY} XP par jour</span></div>
+     <div class="panel"><svg viewBox="0 0 280 96" style="width:100%;height:auto;display:block" role="img" aria-label="XP gagnés chaque jour sur les 14 derniers jours">
+       <line x1="0" x2="280" y1="${y(DAILY)}" y2="${y(DAILY)}" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="3 4"/>
+       ${days.map((d,i)=>{const h=Math.max(d.v/max*70,2);return `<rect x="${i*20+3}" y="${(84-h).toFixed(1)}" width="14" height="${h.toFixed(1)}" rx="3" fill="${d.v>=DAILY?"var(--green)":d.v?"var(--ink)":"var(--panel-2)"}"/><text x="${i*20+10}" y="95" text-anchor="middle" font-size="8" fill="var(--ink-2)" font-family="Archivo,sans-serif">${d.l}</text>`}).join("")}
+     </svg></div>
+   </section>
+   <section class="sec">
+     <div class="sec-h"><h2>Badges</h2><span class="pill">${Object.keys(S.badges).length}/${BADGES.length}</span></div>
+     <div class="badges">${BADGES.map(b=>{const on=!!S.badges[b.id];return `<div class="badge ${on?"":"off"}"><svg viewBox="0 0 28 36" aria-hidden="true"><path d="M2 2h24v20L14 34 2 22z" fill="${on?"var(--yellow)":"none"}" stroke="${on?"var(--yellow)":"var(--ink-2)"}" stroke-width="2" ${on?"":'stroke-dasharray="3 3"'}/>${on?'<path d="M8 14l4 4 8-8" fill="none" stroke="#0B2545" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>':""}</svg><div><b>${b.t}</b><span>${b.d}</span></div></div>`}).join("")}</div>
+   </section>
+   <section class="sec">
+     <h2>Grades</h2>
+     <div class="panel ranks">${LEVELS.map((l,i)=>`<div class="rank ${i===li?"on":""}"><span>${l.n}</span><span>${l.xp} XP</span></div>`).join("")}</div>
+   </section>
+   <section class="sec">
+     <h2>Sources</h2>
+     <div class="note stack" style="gap:8px">${SOURCES.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${t}</a>`).join("")}<span>Référence complète : le Cours des Glénans.</span></div>
+   </section>
+   <section class="sec">
+     <h2>Remettre à zéro</h2>
+     <p class="sub">Ta progression est gardée dans ce navigateur. Tout effacer supprime XP, badges, missions et journal.</p>
+     <div><button class="btn warn press" id="reset">Tout effacer</button></div>
+   </section>`);
+  $("#reset").onclick=e=>{const b=e.currentTarget;if(b.dataset.armed){S=def();save();renderTop();renderLog();toast("Progression effacée")}else{b.dataset.armed="1";b.textContent="Confirmer : tout effacer"}};
+}
+
+/* ============================================================
+   QUIZ : répétition espacée en boîtes de 0 à 5
+   ============================================================ */
+let Q=null,lastFocus=null;
+function pickQuestions(modId,n=10){
+  const pool=[];MODULES.forEach(m=>{if(!modId||m.id===modId)m.qs.forEach((q,i)=>pool.push({m,i,q,id:m.id+":"+i}))});
+  const w=x=>{const b=S.boxes[x.id];return b===undefined?4:[4,6,4,2.5,1.5,.7][b]};
+  const out=[],p=pool.slice();
+  while(out.length<n&&p.length){const tot=p.reduce((s,x)=>s+w(x),0);let r=Math.random()*tot,k=0;for(;k<p.length;k++){r-=w(p[k]);if(r<=0)break}out.push(p.splice(Math.min(k,p.length-1),1)[0])}
+  return out;
+}
+function openOverlay(){lastFocus=document.activeElement;$("#overlay").hidden=false;document.body.style.overflow="hidden";$("#overlay").scrollTop=0}
+function closeOverlay(){$("#overlay").hidden=true;document.body.style.overflow="";Q=null;route();lastFocus?.focus?.()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#overlay").hidden)closeOverlay()});
+function ovTop(inner){return `<div class="ov-top"><button class="x press" id="cl" aria-label="Fermer">${I.close}</button>${inner}</div>`}
+function startQuiz(modId){Q={list:pickQuestions(modId),i:0,ok:0,res:[],xp:0,mod:modId};openOverlay();renderQ()}
+function renderQ(){
+  const it=Q.list[Q.i],[q,ans,exp]=it.q,order=shuffle(ans.map((a,k)=>({a,k})));
+  $("#ov").innerHTML=`${ovTop(`<div class="steps" aria-hidden="true">${Q.list.map((_,k)=>`<i class="${k<Q.i?(Q.res[k]?"ok":"ko"):(k===Q.i?"cur":"")}"></i>`).join("")}</div><span class="count">${Q.i+1} sur ${Q.list.length}</span>`)}
+   <p class="topic">${it.m.t}</p><h2 class="q" id="qq">${q}</h2>
+   <div class="opts" role="group" aria-labelledby="qq">${order.map((o,j)=>`<button class="opt press" data-k="${o.k}"><span class="k">${"ABCD"[j]}</span><span>${o.a}</span></button>`).join("")}</div>
+   <div id="fb" aria-live="polite"></div>`;
+  $("#cl").onclick=closeOverlay;
+  $$(".opt").forEach(b=>b.onclick=()=>answer(b,+b.dataset.k===0,exp));
+  $(".opt").focus({preventScroll:true});
+}
+function answer(btn,ok,exp){
+  const it=Q.list[Q.i];
+  $$(".opt").forEach(b=>{b.disabled=true;if(b.dataset.k==="0"){b.classList.add("ok");b.querySelector(".k").innerHTML=I.check}});
+  if(!ok){btn.classList.add("ko");btn.querySelector(".k").innerHTML=I.cross}
+  const b=S.boxes[it.id]||0;S.boxes[it.id]=ok?Math.min(5,b+1):1;
+  S.stats.ans++;if(ok){S.stats.ok++;Q.ok++;Q.xp+=10}
+  Q.res[Q.i]=ok;save();if(ok)addXP(10);
+  const last=Q.i===Q.list.length-1;
+  $("#fb").innerHTML=`<div class="fb ${ok?"ok":"ko"}"><strong>${ok?"Juste, +10 XP":"Pas cette fois"}</strong><p>${exp}</p></div><div class="dock"><button class="btn main block press" id="nx">${last?"Voir le bilan":"Question suivante"}</button></div>`;
+  $("#nx").onclick=()=>{if(last)endQuiz();else{Q.i++;renderQ();$("#overlay").scrollTop=0}};
+  $("#nx").focus({preventScroll:true});$("#fb").scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+function endQuiz(){
+  S.stats.sessions++;let bonus=0;
+  if(Q.ok===Q.list.length)S.stats.perfect++;
+  if(Q.ok>=Math.ceil(Q.list.length*.8))bonus=20;
+  save();if(bonus)addXP(bonus);else checkBadges();
+  const msg=Q.ok===Q.list.length?"Sans faute.":Q.ok>=7?"Bon quart. Les erreurs reviendront bientôt pour être consolidées.":"Les questions ratées reviendront plus souvent. Relis la fiche du module.";
+  const mod=Q.mod;
+  $("#ov").innerHTML=`${ovTop("")}
+   <section class="field result"><h1>${Q.ok}/${Q.list.length}</h1><p class="meta"><span>Bilan du quart : <b>+${Q.xp+bonus} XP</b>${bonus?", dont 20 de bonus":""}</span></p><p>${msg}</p></section>
+   <div class="stack"><button class="btn main block press" id="again">Un autre quart</button><button class="btn block press" id="done">Terminer</button></div>`;
+  $("#cl").onclick=closeOverlay;$("#done").onclick=closeOverlay;$("#again").onclick=()=>startQuiz(mod);$("#again").focus();
+}
+
+/* ============================================================
+   JEU : ALLURES ET AMURES
+   ============================================================ */
+const ZONES=[
+ {k:"debout",l:"Vent debout",r:[0,25],amure:false},
+ {k:"pres",l:"Près",r:[40,50],amure:true},
+ {k:"travers",l:"Travers",r:[85,95],amure:true},
+ {k:"largue",l:"Largue",r:[105,118],amure:true},
+ {k:"glargue",l:"Grand largue",r:[135,160],amure:true},
+ {k:"arriere",l:"Vent arrière",r:[172,180],amure:false}
+];
+let A=null;
+function allureSVG(R,mini){
+  /* R : gisement du vent depuis l'étrave, sens horaire (0 à 180 = vent par tribord) */
+  const rel=((R%360)+360)%360,H=(360-rel)%360,twa=rel>180?360-rel:rel,stbd=rel>0&&rel<180;
+  const side=stbd?-1:1,d=twa<28?0:Math.min(82,Math.max(8,(twa-30)*.55)),rad=d*Math.PI/180,L=46;
+  const bx=side*L*Math.sin(rad),by=-8+L*Math.cos(rad);
+  const gx=side*22*Math.sin(rad*.9+.1),gy=-50+44*Math.cos(rad*.6);
+  const boat=`<g transform="rotate(${H})">
+    <path d="M0-62C20-36 23 16 15 54L-15 54C-23 16-20-36 0-62Z" fill="#FFFFFF" stroke="#0B2545" stroke-width="2.5"/>
+    <circle cx="-6" cy="40" r="4.5" fill="none" stroke="#0B2545" stroke-width="1.6"/><circle cx="6" cy="40" r="4.5" fill="none" stroke="#0B2545" stroke-width="1.6"/>
+    ${d?`<path d="M0-58Q${(gx*.4+side*8).toFixed(1)} -30 ${gx.toFixed(1)} ${gy.toFixed(1)}" fill="none" stroke="#C8102E" stroke-width="2.6"/>`:`<path d="M0-58q5 6 0 12t0 12" fill="none" stroke="#C8102E" stroke-width="2.4"/>`}
+    <line x1="0" y1="-8" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#0B2545" stroke-width="3.6" stroke-linecap="round"/>
+    <circle cx="0" cy="-8" r="4" fill="#0B2545"/></g>`;
+  const arrows=(mini?[-50,0,50]:[-80,-40,0,40,80]).map(x=>`<g transform="translate(${x} -124)"><line y1="0" y2="20" stroke="#1C3A60" stroke-width="3"/><path d="M-6 16L0 28 6 16z" fill="#1C3A60"/></g>`).join("");
+  return `<svg viewBox="-130 -135 260 262" role="img" aria-label="Voilier vu du dessus, le vent vient du haut de l'image">
+    ${mini?"":`<text x="0" y="-127" text-anchor="middle" font-size="11" font-weight="700" font-family="Archivo,sans-serif" fill="#1C3A60">VENT</text>`}
+    ${arrows}<circle r="98" fill="none" stroke="#8FAEC4" stroke-width="1.5" stroke-dasharray="2 6"/>${boat}</svg>`;
+}
+function newAllure(){
+  const z=ZONES[Math.floor(Math.random()*ZONES.length)];
+  const twa=Math.round(z.r[0]+Math.random()*(z.r[1]-z.r[0])),stbd=Math.random()<.5;
+  A.cur={z,twa,stbd,R:stbd?twa:360-twa,pick:null,amure:null,done:false};
+}
+function startAllures(){A={streak:0};newAllure();openOverlay();renderAllure()}
+function renderAllure(){
+  const c=A.cur;
+  $("#ov").innerHTML=`${ovTop(`<h2 style="flex:1">Allures</h2><span class="pill">série ${A.streak}</span><span class="pill xp">record ${S.stats.alluresBest}</span>`)}
+   <div class="stage">${allureSVG(c.R)}</div>
+   <div class="stack" style="gap:8px"><p class="label">D'abord, l'allure</p><div class="choices">${ZONES.map(z=>`<button class="choice press" data-z="${z.k}">${z.l}</button>`).join("")}</div></div>
+   <div id="amr"></div><div id="afb" aria-live="polite"></div>`;
+  $("#cl").onclick=closeOverlay;
+  $$("[data-z]").forEach(b=>b.onclick=()=>{if(c.done)return;c.pick=b.dataset.z;$$("[data-z]").forEach(x=>x.classList.toggle("sel",x===b));const z=ZONES.find(x=>x.k===c.pick);if(z.amure)askAmure();else{$("#amr").innerHTML="";judgeAllure()}});
+}
+function askAmure(){
+  const c=A.cur;
+  $("#amr").innerHTML=`<div class="stack" style="gap:8px"><p class="label">Puis l'amure</p><div class="choices"><button class="choice port press" data-a="babord">Bâbord amures</button><button class="choice stbd press" data-a="tribord">Tribord amures</button></div></div>`;
+  $$("[data-a]").forEach(b=>b.onclick=()=>{if(c.done)return;c.amure=b.dataset.a;judgeAllure()});
+  $("#amr").scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+function judgeAllure(){
+  const c=A.cur;c.done=true;
+  const good=c.stbd?"tribord":"babord";
+  const ok=c.pick===c.z.k&&(!c.z.amure||c.amure===good);
+  $$("[data-z]").forEach(b=>{b.classList.remove("sel");if(b.dataset.z===c.z.k)b.classList.add("ok");else if(b.dataset.z===c.pick)b.classList.add("ko");b.disabled=true});
+  $$("[data-a]").forEach(b=>{if(c.z.amure&&b.dataset.a===good)b.classList.add("ok");else if(b.dataset.a===c.amure)b.classList.add("ko");b.disabled=true});
+  if(ok){A.streak++;S.stats.alluresOk++;S.stats.alluresBest=Math.max(S.stats.alluresBest,A.streak);save();addXP(5)}else{A.streak=0;save()}
+  const am=c.z.amure?`, ${c.stbd?"tribord":"bâbord"} amures`:"";
+  const why=c.z.amure?`Le vent arrive par ${c.stbd?"tribord":"bâbord"}, donc la bôme est à ${c.stbd?"bâbord":"tribord"}.`:(c.z.k==="debout"?"Trop près du vent, les voiles faseyent : il faut abattre.":"Vent dans le dos : surveille la bôme, l'empannage n'est pas loin.");
+  $("#afb").innerHTML=`<div class="fb ${ok?"ok":"ko"}"><strong>${ok?"Juste, +5 XP":"Raté"}</strong><p>${c.z.l}${am}. Le vent arrive à ${c.twa}° de l'étrave. ${why}</p></div><div class="dock"><button class="btn main block press" id="anx">Bateau suivant</button></div>`;
+  $("#anx").onclick=()=>{newAllure();renderAllure();$("#overlay").scrollTop=0};$("#anx").focus({preventScroll:true});
+  $("#afb").scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+
+/* ============================================================
+   JEU : BALISES (système IALA, région A)
+   ============================================================ */
+const BUOYS={
+ N:{l:"Cardinale Nord",x:"Passe au nord. Voyant : deux cônes pointes en haut. Feu blanc scintillant continu."},
+ E:{l:"Cardinale Est",x:"Passe à l'est. Voyant : cônes base contre base. Feu blanc : 3 scintillements."},
+ S:{l:"Cardinale Sud",x:"Passe au sud. Voyant : deux cônes pointes en bas. Feu blanc : 6 scintillements et un éclat long."},
+ W:{l:"Cardinale Ouest",x:"Passe à l'ouest. Voyant : cônes pointe contre pointe. Feu blanc : 9 scintillements."},
+ babord:{l:"Latérale bâbord",x:"En entrant au port, laisse-la à bâbord. Voyant cylindrique, feu rouge."},
+ tribord:{l:"Latérale tribord",x:"En entrant au port, laisse-la à tribord. Voyant conique, feu vert."},
+ danger:{l:"Danger isolé",x:"Petit danger entouré d'eaux saines : passe avec de la marge. Deux sphères noires, feu blanc à 2 éclats."},
+ saines:{l:"Eaux saines",x:"Eau navigable tout autour : milieu de chenal ou atterrissage. Sphère rouge, feu blanc isophase, à occultations ou à un éclat long."},
+ speciale:{l:"Marque spéciale",x:"Zone particulière (baignade, câble, zone réglementée). Regarde la carte. Croix jaune, feu jaune."}
+};
+let bid=0;
+function buoySVG(t,mini){
+  const K="#1B1B1B",Y="#F5C400",R="#C8102E",G="#00804A",W="#FFFFFF";
+  const bands={N:[K,Y],S:[Y,K],E:[K,Y,K],W:[Y,K,Y],babord:[R],tribord:[G],danger:[K,R,K],speciale:[Y]}[t];
+  const top=-30,bot=60,hw=y=>16+(y-top)/(bot-top)*4;
+  let body="";
+  if(t==="saines"){const id="cp"+(++bid);body=`<clipPath id="${id}"><path d="M-16 -30h32l4 90h-40z"/></clipPath><g clip-path="url(#${id})">${[0,1,2,3,4].map(i=>`<rect x="${-22+i*9}" y="-30" width="9" height="90" fill="${i%2?W:R}"/>`).join("")}</g>`}
+  else{const h=(bot-top)/bands.length;body=bands.map((c,i)=>{const y1=top+i*h,y2=y1+h;return `<path d="M${-hw(y1)} ${y1}L${hw(y1)} ${y1}L${hw(y2)} ${y2}L${-hw(y2)} ${y2}Z" fill="${c}"/>`}).join("")}
+  const up=y=>`<path d="M-11 ${y}h22l-11-17z" fill="${K}"/>`,dn=y=>`<path d="M-11 ${y-17}h22l-11 17z" fill="${K}"/>`;
+  const tm={N:up(-44)+up(-64),S:dn(-61)+dn(-41),E:up(-58)+dn(-40),W:dn(-61)+up(-38),
+   babord:`<rect x="-9" y="-62" width="18" height="22" fill="${R}"/>`,tribord:`<path d="M-11 -42h22l-11-22z" fill="${G}"/>`,
+   danger:`<circle cx="0" cy="-66" r="8" fill="${K}"/><circle cx="0" cy="-47" r="8" fill="${K}"/>`,saines:`<circle cx="0" cy="-50" r="10" fill="${R}"/>`,
+   speciale:`<path d="M-10 -64l20 22M10 -64l-20 22" stroke="${Y}" stroke-width="5" stroke-linecap="round"/>`}[t];
+  const svg=`<rect x="-1.5" y="-76" width="3" height="48" fill="${K}"/>${tm}${body}<path d="M-26 60h52l-6 10h-40z" fill="#3B4A52"/><path d="M-78 68q9-6 18 0t18 0 18 0 18 0 18 0 18 0 18 0 18 0" fill="none" stroke="#1C3A60" stroke-width="2.5" stroke-linecap="round"/>`;
+  return `<svg viewBox="-80 -90 160 170" role="img" aria-label="Marque de balisage${mini?"":" à identifier"}">${svg}</svg>`;
+}
+let B=null;
+function startBalises(){B={streak:0,last:null};openOverlay();newBuoy()}
+function newBuoy(){
+  const keys=Object.keys(BUOYS);let t;do{t=keys[Math.floor(Math.random()*keys.length)]}while(t===B.last);B.last=t;
+  const opts=shuffle([t,...shuffle(keys.filter(k=>k!==t)).slice(0,3)]);
+  $("#ov").innerHTML=`${ovTop(`<h2 style="flex:1">Balises</h2><span class="pill">série ${B.streak}</span><span class="pill xp">record ${S.stats.balisesBest}</span>`)}
+   <div class="stage" style="padding:16px">${buoySVG(t)}</div>
+   <p class="label">Quelle est cette marque ? (Europe, région A)</p>
+   <div class="choices">${opts.map(k=>`<button class="choice press" data-b="${k}">${BUOYS[k].l}</button>`).join("")}</div>
+   <div id="bfb" aria-live="polite"></div>`;
+  $("#cl").onclick=closeOverlay;
+  $$("[data-b]").forEach(b=>b.onclick=()=>{
+    const ok=b.dataset.b===t;
+    $$("[data-b]").forEach(x=>{x.disabled=true;if(x.dataset.b===t)x.classList.add("ok")});
+    if(!ok)b.classList.add("ko");
+    if(ok){B.streak++;S.stats.balisesOk++;S.stats.balisesBest=Math.max(S.stats.balisesBest,B.streak);save();addXP(5)}else{B.streak=0;save()}
+    $("#bfb").innerHTML=`<div class="fb ${ok?"ok":"ko"}"><strong>${ok?"Juste, +5 XP":"C'était : "+BUOYS[t].l}</strong><p>${BUOYS[t].x}</p></div><div class="dock"><button class="btn main block press" id="bnx">Marque suivante</button></div>`;
+    $("#bnx").onclick=()=>{newBuoy();$("#overlay").scrollTop=0};$("#bnx").focus({preventScroll:true});
+    $("#bfb").scrollIntoView({block:"nearest",behavior:"smooth"});
+  });
+}
+
+renderTop();route();
+</script>

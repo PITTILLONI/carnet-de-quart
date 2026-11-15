@@ -86,12 +86,14 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .tile{display:flex;flex-direction:column;gap:var(--s2);text-align:left;background:var(--panel);border-radius:var(--r);padding:var(--s3);min-width:0}
 .tile .art{background:var(--sky);border-radius:10px;aspect-ratio:4/3;display:grid;place-items:center;overflow:hidden}
 .tile .art svg{height:84%;width:auto;max-width:100%}
-.tile p{font-size:var(--t-s);color:var(--ink-2)}
+.tile .tt,.panel .tt{display:block;font-size:var(--t-l);font-weight:700;font-stretch:105%;line-height:1.15}
+.tile .td{display:block;font-size:var(--t-s);color:var(--ink-2)}
+.h3{font-size:var(--t-l);font-weight:700;font-stretch:105%}
 @media (max-width:359px){.tiles{grid-template-columns:1fr}}
 
 .list{display:flex;flex-direction:column;gap:var(--s2)}
 .item{display:grid;grid-template-columns:1fr auto;gap:var(--s2) var(--s4);align-items:center;width:100%;min-height:64px;text-align:left;background:var(--panel);border-radius:12px;padding:var(--s3) var(--s4)}
-.item h3{font-size:var(--t-b);font-weight:700;font-stretch:100%;line-height:1.3}
+.item .it{font-weight:700;line-height:1.3}
 .item .pct{font-weight:800;font-size:var(--t-b);min-width:3.2em;text-align:right}
 .item .track{grid-column:1/-1;height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
 .item .track i{display:block;height:100%;background:var(--green);transform-origin:left}
@@ -126,8 +128,8 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .box{width:28px;height:28px;border-radius:8px;background:var(--panel-2);display:grid;place-items:center;color:#fff}
 .box svg{width:18px;height:18px}
 .mis.done .box{background:var(--green)}
-.mis h3{font-size:var(--t-b);font-weight:700;font-stretch:100%;line-height:1.3}
-.mis .xp{font-size:var(--t-s);font-weight:700;color:var(--ink-2)}
+.mis .mt{display:block;font-weight:700;line-height:1.3}
+.mis .xp{display:block;font-size:var(--t-s);font-weight:700;color:var(--ink-2)}
 .mis[open] .chev{transform:rotate(90deg)}
 .chev{transition:transform .2s var(--ease)}
 .mis .body{padding:0 var(--s4) var(--s4) calc(var(--s4) + 28px + var(--s3));display:flex;flex-direction:column;gap:var(--s3)}
@@ -592,7 +594,7 @@ function bindCommon(){
 /* ============================================================
    ÉCRANS
    ============================================================ */
-function modItem(m){const v=mastery(m);return `<button class="item press" data-mod="${m.id}"><h3>${m.t}</h3><span class="pct">${Math.round(v*100)} %</span><span class="track" aria-hidden="true"><i style="transform:scaleX(${v.toFixed(3)})"></i></span></button>`}
+function modItem(m){const v=mastery(m);return `<button class="item press" data-mod="${m.id}"><span class="it">${m.t}</span><span class="pct">${Math.round(v*100)} %</span><span class="track" aria-hidden="true"><i style="transform:scaleX(${v.toFixed(3)})"></i></span></button>`}
 
 function renderHome(){
   const li=levelOf(S.xp),cur=LEVELS[li],nxt=LEVELS[li+1];
@@ -611,13 +613,13 @@ function renderHome(){
    <section class="sec">
      <div class="sec-h"><h2>S'entraîner vite</h2></div>
      <div class="tiles">
-       <button class="tile press" id="gA"><span class="art">${allureSVG(312,true)}</span><h3>Allures</h3><p>Trouve l'allure et l'amure. Record : ${S.stats.alluresBest}</p></button>
-       <button class="tile press" id="gB"><span class="art">${buoySVG("W",true)}</span><h3>Balises</h3><p>Reconnais la marque. Record : ${S.stats.balisesBest}</p></button>
+       <button class="tile press" id="gA"><span class="art" aria-hidden="true">${allureSVG(312,true)}</span><span class="tt">Allures</span><span class="td">Trouve l'allure et l'amure. Record : ${S.stats.alluresBest}</span></button>
+       <button class="tile press" id="gB"><span class="art" aria-hidden="true">${buoySVG("W",true)}</span><span class="tt">Balises</span><span class="td">Reconnais la marque. Record : ${S.stats.balisesBest}</span></button>
      </div>
    </section>
    ${nm?`<section class="sec">
      <div class="sec-h"><h2>Prochaine mission</h2><button class="more" data-go="bord">Toutes</button></div>
-     <button class="panel press stack" data-go="bord" style="text-align:left;gap:6px"><div class="row between"><h3>${nm.t}</h3><span class="pill">+${nm.xp} XP</span></div><p class="sub">${nm.why}</p></button>
+     <button class="panel press stack" data-go="bord" style="text-align:left;gap:6px"><span class="row between"><span class="tt">${nm.t}</span><span class="pill">+${nm.xp} XP</span></span><span class="sub">${nm.why}</span></button>
    </section>`:""}
    <section class="sec">
      <div class="sec-h"><h2>À réviser</h2><button class="more" data-go="theorie">Tout voir</button></div>
@@ -650,7 +652,7 @@ function renderModule(m){
      <p class="lead">Maîtrise du module : ${Math.round(mastery(m)*100)} %</p>
      <p style="max-width:52ch">${m.intro}</p>
    </section>
-   ${m.lessons.map(l=>`<section class="panel lesson stack"><h3>${l.h}</h3><ul>${l.li.map(x=>`<li>${x}</li>`).join("")}</ul></section>`).join("")}
+   ${m.lessons.map(l=>`<section class="panel lesson stack"><h2 class="h3">${l.h}</h2><ul>${l.li.map(x=>`<li>${x}</li>`).join("")}</ul></section>`).join("")}
    <button class="btn main block press" id="train">S'entraîner : ${Math.min(10,m.qs.length)} questions</button>`);
   $("#train").onclick=()=>startQuiz(m.id);
   bindCommon();
@@ -692,7 +694,7 @@ function renderBoard(){
   $("#jForm").onsubmit=e=>{e.preventDefault();S.journal.unshift({id:Date.now(),date:$("#j-date").value,lieu:$("#j-lieu").value.trim(),vent:+$("#j-vent").value,milles:$("#j-milles").value,appris:$("#j-appris").value.trim()});save();addXP(20);toast("Sortie notée, +20 XP");renderBoard();$("#jList").scrollIntoView({block:"start"})};
   bindMissions();bindJournal();
 }
-function missionHTML(m){const d=!!S.missions[m.id];return `<details class="mis ${d?"done":""}" data-m="${m.id}"><summary><span class="box" aria-hidden="true">${d?I.check:""}</span><span><h3>${m.t}</h3><span class="xp">${d?"Faite":"+"+m.xp+" XP"}</span></span>${I.chev}</summary><div class="body"><p class="sub">${m.why}</p><ol>${m.steps.map(s=>`<li>${s}</li>`).join("")}</ol><div><button class="btn ${d?"":"main"} press" data-mission="${m.id}">${d?"Marquer comme non faite":"Mission accomplie"}</button></div></div></details>`}
+function missionHTML(m){const d=!!S.missions[m.id];return `<details class="mis ${d?"done":""}" data-m="${m.id}"><summary><span class="box" aria-hidden="true">${d?I.check:""}</span><span><span class="mt">${m.t}</span><span class="xp">${d?"Faite":"+"+m.xp+" XP"}</span></span>${I.chev}</summary><div class="body"><p class="sub">${m.why}</p><ol>${m.steps.map(s=>`<li>${s}</li>`).join("")}</ol><div><button class="btn ${d?"":"main"} press" data-mission="${m.id}">${d?"Marquer comme non faite":"Mission accomplie"}</button></div></div></details>`}
 function bindMissions(){$$("[data-mission]").forEach(b=>b.onclick=()=>toggleMission(b.dataset.mission))}
 function toggleMission(id){
   const m=allMissions().find(x=>x.id===id);
@@ -765,8 +767,9 @@ function pickQuestions(modId,n=10){
   while(out.length<n&&p.length){const tot=p.reduce((s,x)=>s+w(x),0);let r=Math.random()*tot,k=0;for(;k<p.length;k++){r-=w(p[k]);if(r<=0)break}out.push(p.splice(Math.min(k,p.length-1),1)[0])}
   return out;
 }
-function openOverlay(){lastFocus=document.activeElement;$("#overlay").hidden=false;document.body.style.overflow="hidden";$("#overlay").scrollTop=0}
-function closeOverlay(){$("#overlay").hidden=true;document.body.style.overflow="";Q=null;route();lastFocus?.focus?.()}
+function setInert(v){["header.bar","main","nav.tabs"].forEach(q=>{const e=$(q);if(e)e.inert=v})}
+function openOverlay(){lastFocus=document.activeElement;setInert(true);$("#overlay").hidden=false;document.body.style.overflow="hidden";$("#overlay").scrollTop=0}
+function closeOverlay(){setInert(false);$("#overlay").hidden=true;document.body.style.overflow="";Q=null;route();lastFocus?.focus?.()}
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#overlay").hidden)closeOverlay()});
 function ovTop(inner){return `<div class="ov-top"><button class="x press" id="cl" aria-label="Fermer">${I.close}</button>${inner}</div>`}
 function startQuiz(modId){Q={list:pickQuestions(modId),i:0,ok:0,res:[],xp:0,mod:modId};openOverlay();renderQ()}

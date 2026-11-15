@@ -4,6 +4,31 @@ Une entrée par session de travail, la plus récente en haut. On y note ce qui a
 
 ---
 
+## 2026-11-15 (suite) — Web app installable et accessible
+
+### Fait
+- **Web app installable (PWA)** :
+  - Manifeste `manifest.webmanifest`.
+  - Icônes au pavillon P (192, 512, maskable, Apple 180).
+  - Couleur de thème marine, mode plein écran (standalone).
+- **Hors ligne** : service worker `sw.js`. L'app et la police sont mises en cache à la première ouverture ; la page passe d'abord par le réseau pour recevoir les mises à jour.
+- **Build** : `build.py` génère `index.html` (web app) à partir de `carnet-de-quart.html` (source, aussi publiée comme artifact).
+- **Accessibilité** :
+  - Plus de titres à l'intérieur des boutons ; la hiérarchie des titres est corrigée dans les fiches.
+  - Quand un quiz ou un jeu est ouvert, l'arrière-plan devient inactif (`inert`), Échap ferme, et le focus revient au bouton d'origine.
+  - Audit axe-core 4.10 (WCAG 2.0 et 2.1 A/AA, bonnes pratiques) : **0 violation sur les 8 écrans** (accueil, théorie, module, à bord, carnet, quiz, allures, balises).
+- README : mode d'emploi pour installer l'app sur iPhone et Android, rôle de chaque fichier.
+
+### Décisions
+- Lighthouse n'a pas pu tourner (npm n'a pas accès au réseau dans le bac à sable de Claude) : axe-core, le moteur d'accessibilité de Lighthouse, a été utilisé à la place.
+- À chaque mise à jour : modifier `carnet-de-quart.html`, lancer `python3 build.py`, changer `VERSION` dans `sw.js`.
+
+### À faire / idées
+- Installer l'app sur un vrai iPhone et un vrai Android, puis tester le mode avion.
+- Tester avec VoiceOver et TalkBack.
+
+---
+
 ## 2026-11-15 — Création, refonte et mise en ligne
 
 ### Fait

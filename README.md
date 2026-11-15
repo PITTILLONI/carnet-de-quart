@@ -17,10 +17,19 @@ App web gamifiée pour apprendre la voile (théorie et pratique) à bord d'un Je
 - **À bord** : 19 missions pratiques, une fiche de repères du bateau et un journal de bord.
 - **Carnet** : XP, grades, série de jours, badges.
 
-Pour l'utiliser, ouvre l'app en ligne (lien ci-dessus) ou `index.html` dans un navigateur. La page tient en un seul fichier, sans dépendance à part la police Archivo (Google Fonts). La progression est enregistrée dans le navigateur (localStorage).
+## Installer l'app sur ton téléphone
 
-- `index.html` : page autonome.
-- `carnet-de-quart.html` : même contenu, au format publié comme artifact Claude (sans en-tête HTML).
+C'est une web app installable (PWA). Une fois ouverte une première fois, elle fonctionne **hors ligne**, en mer sans réseau.
+
+- **iPhone (Safari)** : ouvre https://pittilloni.github.io/carnet-de-quart/, touche le bouton Partager, puis « Sur l'écran d'accueil ».
+- **Android (Chrome)** : ouvre le lien, menu ⋮, puis « Installer l'application » (ou « Ajouter à l'écran d'accueil »).
+
+La progression reste enregistrée sur le téléphone (localStorage). Elle ne se synchronise pas entre appareils. La page tient en un seul fichier, sans dépendance à part la police Archivo (Google Fonts). La progression est enregistrée dans le navigateur (localStorage).
+
+- `carnet-de-quart.html` : **source à modifier**. C'est aussi la version publiée comme artifact Claude.
+- `build.py` : génère `index.html` (la web app) à partir de la source. Lance `python3 build.py` après chaque modification.
+- `index.html` : web app générée (en-tête HTML, manifeste, service worker).
+- `manifest.webmanifest`, `sw.js`, `icons/` : installation et mode hors ligne. Change `VERSION` dans `sw.js` à chaque mise à jour.
 - `design-system/carnet-de-quart/MASTER.md` : décisions de design.
 
 ## Sources
